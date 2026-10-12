@@ -44,6 +44,10 @@ Windows向けの非公式ぷよぷよ振り返り・盤面解析ツールです�
 - YouTube再生は公式埋め込みプレイヤーを利用し、動画をダウンロードしません。
 - 記録データの保存先は `%USERPROFILE%\PuyoReview` です。アプリの更新時にこのフォルダを削除しないでください。
 
+## ライセンス表示
+
+配布ZIPには、同梱ライブラリのライセンス文書をまとめた `THIRD_PARTY_LICENSES/` を収録しています。最新ビルドに含まれる依存関係の文書を確認してください。
+
 ## 利用条件・開発について
 
 個人利用のための無償配布です。**ソースコードは公開しておらず、オープンソースライセンス（MITなど）では配布していません**。利用条件は [TERMS.md](TERMS.md) を確認してください。
@@ -52,4 +56,4 @@ Windows向けの非公式ぷよぷよ振り返り・盤面解析ツールです�
 
 同梱する第三者ライブラリは各ライブラリのライセンスに従います。主な構成と注意事項は [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) を参照してください。
 
-不具合や機能要望は [Issues](https://github.com/Volterrappi/PuyoReview-Release/issues) で受け付けます。報告時には個人情報、APIキー、動画の非公開URLなどを投稿しないようにしてください。
+不具合や機能要望は [X（@istnpypy）](https://x.com/istnpypy) または [GitHub Issues](https://github.com/Volterrappi/PuyoReview-Release/issues) へお願いします。報告時には個人情報、APIキー、動画の非公開URLなどを投稿しないようにしてください。
