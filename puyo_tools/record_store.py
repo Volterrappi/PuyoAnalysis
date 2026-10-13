@@ -16,6 +16,8 @@ def _atomic(path, value):
     tmp.replace(path)
 
 def _safe_name(name):
+    if "/" in str(name) or "\\\\" in str(name) or str(name).strip() in (".",".."):
+        raise ValueError("フォルダ名に区切り文字は使えません")
     result = re.sub(r'[\\/:*?"<>|\\x00-\\x1f]', "_", str(name)).strip(" .")
     if not result or result in (".", ".."):
         raise ValueError("フォルダ名を入力してください")
