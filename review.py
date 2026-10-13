@@ -125,7 +125,7 @@ class Review(tk.Tk):
         self.protocol("WM_DELETE_WINDOW",self.close)
 
     def build(self):
-        self.source_label=ttk.Label(self,text="MP4またはYouTubeを開いてください。YouTubeは共通表示領域への埋め込みを試み、失敗時は別ウィンドウで再生します。",wraplength=1000)
+        self.source_label=ttk.Label(self,text="MP4動画を開いてください。YouTube連携はこの公開版では無効です。",wraplength=1000)
         self.source_label.pack(anchor="w",padx=10,pady=(6,2))
         mainrow=ttk.Frame(self,padding=(8,0,8,2));mainrow.pack(fill="both",expand=True)
         videoarea=ttk.Frame(mainrow);videoarea.pack(side="left",fill="both",expand=True)
@@ -136,16 +136,15 @@ class Review(tk.Tk):
         sidepanel=ttk.Frame(mainrow,width=250);sidepanel.pack(side="right",fill="y",padx=(5,0))
         sidepanel.pack_propagate(False)
         ttk.Label(sidepanel,text="動画・キャプチャ操作",font=('',10,'bold')).pack(anchor="w",pady=(2,6))
-        for label,callback in (("MP4を開く",self.open_mp4),("YouTubeを再生",self.open_youtube),
-                               ("YouTubeを別ウィンドウに戻す",self.undock_youtube),
+        for label,callback in (("MP4を開く",self.open_mp4),
                                ("画面をキャプチャ",self.capture_screen),
                                ("停止画面を解析ツールに入力",self.analyze)):
             ttk.Button(sidepanel,text=label,command=callback).pack(fill="x",pady=2)
         ttk.Separator(sidepanel).pack(fill="x",pady=10)
-        ttk.Label(sidepanel,text="YouTube時刻（自動取得・手動修正可）").pack(anchor="w")
+        ttk.Label(sidepanel,text="動画時刻（既存記録の参照用）").pack(anchor="w")
         self.manual_time=ttk.Entry(sidepanel,width=16);self.manual_time.insert(0,"00:00:00")
         self.manual_time.pack(anchor="w",pady=(3,2))
-        ttk.Label(sidepanel,text="再生ウィンドウで一時停止して取り込み",foreground="gray").pack(anchor="w")
+        ttk.Label(sidepanel,text="MP4を一時停止して取り込み",foreground="gray").pack(anchor="w")
         ttk.Separator(sidepanel).pack(fill="x",pady=10)
         ttk.Label(sidepanel,text="分析種別").pack(anchor="w")
         self.analysis=tk.StringVar(value="連鎖STATS")
@@ -229,6 +228,8 @@ class Review(tk.Tk):
         self.play_btn.config(text="再生")
 
     def open_youtube(self):
+        messagebox.showinfo("機能停止","YouTube連携は初回公開版では無効です。MP4をご利用ください。")
+        return
         url=simpledialog.askstring("YouTube","YouTubeの動画URLを入力してください",parent=self)
         if not url:return
         try: youtube_timestamp(url,0)
@@ -240,6 +241,8 @@ class Review(tk.Tk):
         self.launch_youtube_player(url)
 
     def launch_youtube_player(self,url,start_ms=0):
+        messagebox.showinfo("機能停止","YouTube連携は初回公開版では無効です。")
+        return
         """Use a separate native WebView so desktop capture can see the paused video."""
         try:
             from youtube_player import video_id
