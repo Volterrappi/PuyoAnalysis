@@ -32,7 +32,7 @@ Python以外のライブラリを個別に探して入れる必要はありま�
 
 ### ② ソースZIPをダウンロード・展開
 
-[Releases（ダウンロードページ）](https://github.com/Volterrappi/PuyoReview-Release/releases) から **`PuyoReview-Source-v1.0.0-ReleaseCandidate.zip`** をダウンロードします。
+[Releases（ダウンロードページ）](https://github.com/Volterrappi/PuyoReview-Release/releases) から **`PuyoReview-Source-Windows-v1.0.0.zip`** をダウンロードします。
 
 ZIPを右クリックして「すべて展開」を選び、展開されたフォルダを開きます。
 
