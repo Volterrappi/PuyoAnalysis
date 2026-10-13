@@ -1,0 +1,44 @@
+name: Package source ZIP (YouTube OFF)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/package_windows_source.py'
+      - 'review.py'
+      - 'puyo_tools/**'
+      - 'SETUP_FIRST.bat'
+      - 'START_*.bat'
+      - 'requirements-windows.txt'
+      - 'README.md'
+      - 'TERMS.md'
+      - 'THIRD_PARTY_NOTICES.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: windows-latest
+    steps:
+      - name: Check out public release source
+        uses: actions/checkout@v4
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Generate and inspect source ZIP
+        shell: pwsh
+        run: |
+          python scripts/package_windows_source.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python -m compileall -q review.py puyo_tools
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Upload ZIP for draft release
+        uses: actions/upload-artifact@v4
+        with:
+          name: PuyoReview-Source-Windows-v1.0.0
+          path: dist/PuyoReview-Source-Windows-v1.0.0.zip
+          if-no-files-found: error
+          retention-days: 30
