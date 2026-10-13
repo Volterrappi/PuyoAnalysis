@@ -5,8 +5,8 @@ on:
     branches: [main]
     paths:
       - 'scripts/package_windows_source.py'
-      - 'review.py'
       - 'puyo_tools/**'
+      - 'tests/**'
       - 'SETUP_FIRST.bat'
       - 'START_*.bat'
       - 'requirements-windows.txt'
@@ -33,7 +33,9 @@ jobs:
         run: |
           python scripts/package_windows_source.py
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          python -m compileall -q review.py puyo_tools
+          python -m compileall -q puyo_tools
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python -m unittest discover -s tests -p test_standalone.py
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Upload ZIP for draft release
         uses: actions/upload-artifact@v4
