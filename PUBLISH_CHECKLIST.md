@@ -24,6 +24,13 @@
 - [ ] **重要：Draftに添付されたソースZIPは変更前のまま。更新済みreview.pyを含むZIPを再生成・再添付するまで公開しない**
 - [ ] 最終ZIP内でYouTubeプレイヤー関連のコードを配布する必要があるか再確認（機能停止済みだがソース自体は現在リポジトリ内に存在）
 
+## ソースZIP再生成（2026-10-13）
+- [x] 公開用リポジトリに scripts/package_windows_source.py を追加（YouTube専用4ファイルをZIPから除外）
+- [x] Windows GitHub Actions .github/workflows/package-source.yml を追加（生成・構文検査・Artifact保存）
+- [ ] GitHub Actionsの実行成功を確認（現在、run一覧からは確認できず）
+- [ ] 新ArtifactのZIPをダウンロードしてRelease Draftの同名添付ZIPを差し替える（GitHub連携からRelease asset更新は未実施）
+- [ ] 差し替えたZIPで動作確認
+
 ## 公開前の必須確認と作業
 - [ ] 実機確認したZIPとRelease添付ZIPが同一か、SHA-256等で照合する（GitHub添付ZIPのバイト単位検証は未実施）
 - [ ] 旧EXE版の2つのZIP（PuyoReview-Windows.zip / PuyoAnalysis-Windows.zip）をDraftから削除または別Releaseへ分離する
