@@ -1,6 +1,6 @@
 """Puyo desktop app (Tkinter, standard library only)."""
 import tkinter as tk
-from tkinter import ttk, messagebox, filedialog
+from tkinter import ttk, messagebox, filedialog, simpledialog
 from threading import Thread
 from queue import Queue, Empty
 from collections import defaultdict
@@ -1184,7 +1184,7 @@ class App(tk.Tk):
                 messagebox.showinfo('復元','盤面とNEXTを復元しました。保存済み解析結果は記録JSONにも残っています。')
             except Exception as exc:messagebox.showerror('復元エラー',str(exc),parent=window)
         def make_folder():
-            value=tk.simpledialog.askstring('新規フォルダ','フォルダ名',parent=window)
+            value=simpledialog.askstring('新規フォルダ','フォルダ名',parent=window)
             if not value:return
             try:record_store.add_folder(value);folder.set(value);refresh()
             except Exception as exc:messagebox.showerror('フォルダ',str(exc),parent=window)
