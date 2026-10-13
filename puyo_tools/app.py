@@ -9,6 +9,8 @@ import json
 import sys
 from pathlib import Path
 from PIL import Image, ImageTk, ImageGrab
+import record_store
+from crop_suggest import suggest as suggest_crop
 from common.analysis import candidate_stats, group_by_score, detail_row, matches_filters
 from common.engine import *
 from common.image_board import recognize_board, recognize_esports_next
@@ -222,6 +224,7 @@ class App(tk.Tk):
         self.filters=[];self.custom_sort=None
         self.undo_stack=[];self._drag_snapshot=None;self.search_board=None
         self.review_session=None;self.review_mode=None
+        self.imported_image=None;self.latest_record_result=None
         self.build();self.after(100,self.poll)
 
     def build(self):
@@ -277,6 +280,8 @@ class App(tk.Tk):
         ttk.Button(left,text='盤面＋ネクストをテキスト保存',command=self.save_board).pack(fill='x',pady=3)
         self.review_save_btn=ttk.Button(left,text='振り返り記録に保存',command=self.save_review, state='disabled')
         self.review_save_btn.pack(fill='x',pady=(12,3))
+        ttk.Button(left,text='現在の盤面・解析を記録',command=self.save_standalone).pack(fill='x',pady=3)
+        ttk.Button(left,text='記録一覧・フォルダ管理',command=self.open_record_manager).pack(fill='x',pady=3)
         self.review_csv=tk.BooleanVar(value=False)
         ttk.Checkbutton(left,text='3手全探索：CSVも保存（全候補）',variable=self.review_csv).pack(anchor='w',pady=3)
         self.initial_bonus=tk.BooleanVar(value=False)
@@ -584,6 +589,7 @@ class App(tk.Tk):
             source=source_image if source_image is not None else Image.open(filename)
             source.load()
             source=source.convert('RGB')
+            self.imported_image=source.copy()
         except Exception as exc:
             messagebox.showerror('画像読み込みエラー',str(exc));return
         window=tk.Toplevel(self);window.title('画像から盤面入力（1P・2P範囲指定）')
@@ -613,6 +619,11 @@ class App(tk.Tk):
         cv.configure(scrollregion=(0,0,preview.width,preview.height))
         points=[]
         slots={}
+        auto_candidates = suggest_crop(source.width,source.height)
+        for player,(rectangle,nrows,reason) in auto_candidates.items():
+            slots[player] = {'crop':list(rectangle),'rows':nrows}
+        if auto_candidates:
+            info.configure(text='縦横比から盤面を仮選択しました。格子位置を必ず確認し、必要ならクリックで修正してください。')
         # Remember crop per source + source resolution. Use normalized coordinates
         # so the preview scale and the original pixel coordinates stay consistent.
         saved_crop=None
@@ -623,7 +634,7 @@ class App(tk.Tk):
                 session=json.loads(self.review_session.read_text(encoding='utf-8'))
                 crop_id=crop_key(session.get('source_type'),session.get('source'),(source.width,source.height))
                 saved_crop=load_crops().get(crop_id)
-                slots=player_crops(saved_crop)
+                slots.update(player_crops(saved_crop))
             except (OSError,ValueError,ImportError,KeyError):pass
         def show_grid():
             cv.delete('selection')
@@ -670,6 +681,8 @@ class App(tk.Tk):
         ttk.Button(player_bar,text='2P（右）',command=lambda:select_player('2P')).pack(side='left',padx=4)
         window.bind('<Tab>',lambda e:(select_player('2P' if active_player.get()=='1P' else '1P'),'break')[1])
         restore_player()
+        if auto_candidates and not saved_crop:
+            info.configure(text='縦横比から候補を選択しました（推定）。格子がずれていれば2点をクリックし直してください。')
         rows.trace_add('write',lambda *_:show_grid())
         buttons=ttk.Frame(window);buttons.pack(fill='x',padx=10,pady=8)
         def apply():
@@ -1080,6 +1093,123 @@ class App(tk.Tk):
                       'erased_colors':len(t.erased),'erased_ojama':len(t.erased_ojama)}
                      for t in chain.steps],
         }
+
+
+    def standalone_result(self):
+        """Save a snapshot even when no exhaustive search candidate is selected."""
+        if self.review_mode == '3手全探索' and self.results and self.visible and self.table.selection():
+            chosen=int(self.table.selection()[0])
+            if 0 <= chosen < len(self.visible):
+                index=self.visible[chosen]
+                result=self.results[index]
+                stats=self.stats[index]
+                return {'type':'3手全探索','board':list(self.search_board or self.current),
+                        'selected_index':index,'total_score':stats.total,
+                        'chigiri':stats.chigiri_total,'all_clears':stats.clear_count,
+                        'turns':[{'move':str(t.move),'score':t.points,
+                                  'placed_board':list(t.placed),
+                                  'chain':self.serialize_chain(t.chain)} for t in result.turns]}
+        if self.review_mode in ('連鎖効率','連鎖STATS'):
+            chain=simulate(self.current)
+            return {'type':'連鎖STATS','board':list(self.current),
+                    'chain':self.serialize_chain(chain)}
+        return {'type':'盤面のみ','board':list(self.current)}
+
+    def save_standalone(self):
+        if not self.load_board():return
+        dialog=tk.Toplevel(self);dialog.title('解析・盤面を記録')
+        dialog.geometry('520x380');dialog.transient(self);dialog.grab_set()
+        ttk.Label(dialog,text='保存先フォルダ').pack(anchor='w',padx=12,pady=(12,2))
+        folders=record_store.folders()
+        folder=tk.StringVar(value=folders[0])
+        combo=ttk.Combobox(dialog,textvariable=folder,values=folders,state='readonly')
+        combo.pack(fill='x',padx=12)
+        ttk.Label(dialog,text='名前（動画の時刻・試合名など自由入力）').pack(anchor='w',padx=12,pady=(10,2))
+        name=tk.StringVar()
+        ttk.Entry(dialog,textvariable=name).pack(fill='x',padx=12)
+        ttk.Label(dialog,text='メモ').pack(anchor='w',padx=12,pady=(10,2))
+        memo=tk.Text(dialog,height=7);memo.pack(fill='both',expand=True,padx=12)
+        def do_save():
+            try:
+                board=list(self.search_board or self.current) if self.review_mode=='3手全探索' else list(self.current)
+                pairs=self.pairs_var.get().upper().split()
+                result=self.standalone_result()
+                record_store.save(folder.get(),name.get(),result['type'],
+                                  memo.get('1.0','end-1c'),board,pairs,
+                                  result,self.imported_image)
+                dialog.destroy()
+                messagebox.showinfo('保存','記録に保存しました。')
+            except Exception as exc:messagebox.showerror('保存エラー',str(exc),parent=dialog)
+        ttk.Button(dialog,text='保存',command=do_save).pack(pady=10)
+
+    def open_record_manager(self):
+        window=tk.Toplevel(self);window.title('解析記録・フォルダ管理')
+        window.geometry('1040x560')
+        bar=ttk.Frame(window);bar.pack(fill='x',padx=10,pady=8)
+        ttk.Label(bar,text='フォルダ：').pack(side='left')
+        folder=tk.StringVar(value='すべて')
+        combo=ttk.Combobox(bar,textvariable=folder,state='readonly',width=27)
+        combo.pack(side='left',padx=4)
+        search=tk.StringVar()
+        ttk.Label(bar,text='検索：').pack(side='left',padx=(15,2))
+        ttk.Entry(bar,textvariable=search,width=27).pack(side='left')
+        columns=('number','name','analysis_type','memo','saved_at','folder')
+        table=ttk.Treeview(window,columns=columns,show='headings',height=18)
+        for key,label,width in [('number','採番',50),('name','名前',180),
+                                ('analysis_type','解析種別',100),('memo','メモ',260),
+                                ('saved_at','作成日時',180),('folder','フォルダ',150)]:
+            table.heading(key,text=label);table.column(key,width=width,minwidth=45)
+        table.pack(fill='both',expand=True,padx=10,pady=4)
+        def refresh(*_):
+            choices=['すべて']+record_store.folders()
+            combo['values']=choices
+            if folder.get() not in choices:folder.set('すべて')
+            table.delete(*table.get_children())
+            for r in record_store.list_records(None if folder.get()=='すべて' else folder.get()):
+                if search.get().lower() not in (r.get('name','')+' '+r.get('memo','')).lower():continue
+                table.insert('','end',iid=r['id'],values=tuple(r.get(k,'') for k in columns))
+        def chosen():
+            selection=table.selection()
+            return selection[0] if selection else None
+        def restore():
+            if not chosen():return
+            try:
+                item=record_store.load(chosen())
+                old=self.snapshot_board()
+                self.cells=[list(row) for row in item['board']]
+                self.remember_board(old);self.redraw_editor()
+                if item.get('next_pairs'):self.pairs_var.set(' '.join(item['next_pairs']))
+                self.latest_record_result=item.get('analysis_result')
+                window.destroy()
+                messagebox.showinfo('復元','盤面とNEXTを復元しました。保存済み解析結果は記録JSONにも残っています。')
+            except Exception as exc:messagebox.showerror('復元エラー',str(exc),parent=window)
+        def make_folder():
+            value=tk.simpledialog.askstring('新規フォルダ','フォルダ名',parent=window)
+            if not value:return
+            try:record_store.add_folder(value);folder.set(value);refresh()
+            except Exception as exc:messagebox.showerror('フォルダ',str(exc),parent=window)
+        def move():
+            if not chosen():return
+            destination=tk.simpledialog.askstring('移動','移動先フォルダ名：'+', '.join(record_store.folders()),parent=window)
+            if not destination:return
+            try:record_store.move(chosen(),destination);refresh()
+            except Exception as exc:messagebox.showerror('移動エラー',str(exc),parent=window)
+        def edit():
+            if not chosen():return
+            item=record_store.load(chosen())
+            new_name=tk.simpledialog.askstring('名前を変更','名前',initialvalue=item['name'],parent=window)
+            if new_name is None:return
+            new_memo=tk.simpledialog.askstring('メモを編集','メモ',initialvalue=item.get('memo',''),parent=window)
+            if new_memo is None:return
+            try:record_store.update(chosen(),new_name,new_memo);refresh()
+            except Exception as exc:messagebox.showerror('編集エラー',str(exc),parent=window)
+        controls=ttk.Frame(window);controls.pack(fill='x',padx=10,pady=8)
+        for label,callback in [('盤面を復元',restore),('新規フォルダ',make_folder),('フォルダへ移動',move),('名前・メモ編集',edit),('一覧を更新',refresh)]:
+            ttk.Button(controls,text=label,command=callback).pack(side='left',padx=4)
+        table.bind('<Double-Button-1>',lambda _:restore())
+        combo.bind('<<ComboboxSelected>>',refresh)
+        search.trace_add('write',refresh)
+        refresh()
 
     def save_review(self):
         if self.review_session is None:
