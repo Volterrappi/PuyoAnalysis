@@ -1,19 +1,18 @@
-# 第三者コンポーネントについて
+# 第三者コンポーネントについて（ソース配布版）
 
-このアプリはPythonで開発され、Windows版の作成にPyInstallerを利用しています。実行環境および同梱ライブラリはそれぞれのライセンスに従います。主に次のプロジェクトを利用しています。
+公開予定の**ソースZIPには、Pythonの実行ファイル、OpenCV、FFmpegのDLLなど第三者ライブラリのバイナリを同梱していません**。利用者がセットアップ時にインターネット経由でパッケージを導入する構成です。
 
-| コンポーネント | 用途 | 公式サイト |
+| コンポーネント | 主な用途 | 公式情報 |
 | --- | --- | --- |
-| Python / Python標準ライブラリ | 実行環境 | https://www.python.org/ |
-| Pillow | 画像処理・クリップボード画像 | https://python-pillow.github.io/ |
-| OpenCV / opencv-python | 画像処理 | https://opencv.org/ |
-| pywebview | YouTube表示のWebView | https://pywebview.flowrl.com/ |
-| pythonnet | Windows/.NET連携 | https://pythonnet.github.io/ |
-| PyInstaller | Windows向けEXE作成 | https://pyinstaller.org/ |
-| Microsoft Edge WebView2 | YouTubeプレイヤー表示に利用 | https://developer.microsoft.com/microsoft-edge/webview2/ |
+| Python | 実行環境 | https://www.python.org/ |
+| Pillow | 画像処理・クリップボード | https://pillow.readthedocs.io/ |
+| OpenCV / opencv-python | 画像認識・MP4処理 | https://github.com/opencv/opencv-python |
+| pywebview | YouTubeプレイヤー用WebView | https://pywebview.flowrl.com/ |
+| pythonnet | Windows/.NETとの連携 | https://pythonnet.github.io/ |
+| Microsoft Edge WebView2 | YouTube画面表示 | https://developer.microsoft.com/microsoft-edge/webview2/ |
 
-**OpenCV/FFmpegに関する注意**：`opencv-python` の公式配布wheelはFFmpegを含み、LGPL 2.1の条件が関係します。単にライセンス文を同梱するだけでなく、適用される条件に応じてFFmpegの対応するソースの提供・入手案内や再リンク可能性等の確認が必要です。公式の [opencv-python 第三者ライセンス](https://github.com/opencv/opencv-python/blob/4.x/LICENSE-3RD-PARTY.txt) を参照してください。
+ソースZIPの `requirements-windows.txt` は、利用環境の再現性を高めるため主要なPythonパッケージのバージョンを指定しています。各パッケージとその依存関係には、それぞれ固有のライセンスがあります。
 
-この一覧は主要な直接依存関係を示すもので、すべての再帰的依存関係・著作権表示の網羅を保証するものではありません。各コンポーネントの著作権表示、ライセンス全文、必要な再配布通知の適用については、配布ZIPに同梱される各ライブラリおよび公式のライセンス情報を確認してください。
+**FFmpegについて**：`opencv-python` のWindows wheelにはFFmpegのバイナリが含まれることがあります。ただし、この配布元から配布するソースZIP自体にはそのwheelやDLLを含めません。**第三者が本ソースをEXE化して配布する場合は**、同梱するライブラリに応じてLGPL等の再配布条件を別途満たす必要があります。参考：[opencv-python 第三者ライセンス](https://github.com/opencv/opencv-python/blob/4.x/LICENSE-3RD-PARTY.txt)。
 
-PuyoReview本体の利用条件は [TERMS.md](TERMS.md) にあります。**これらの第三者ライセンスが、PuyoReview自体のソースコードの自由利用を認めるものではありません。**
+PuyoReview自身のソースコード・自作画像の利用条件については [TERMS.md](TERMS.md) を参照してください。ソースコードが読めることは、第三者ライブラリも含めた自由な再配布を意味しません。
