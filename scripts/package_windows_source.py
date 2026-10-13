@@ -10,9 +10,9 @@ ARCHIVE_NAME = "PuyoReview-Source-Windows-v1.0.0.zip"
 OUT = ROOT / "dist" / ARCHIVE_NAME
 FILES = [
     "README.md", "TERMS.md", "THIRD_PARTY_NOTICES.md",
-    "SETUP_FIRST.bat", "START_Analysis.bat", "START_Review.bat",
-    "requirements-windows.txt", "review.py",
-    "puyo_tools/app.py", "puyo_tools/review_crop.py",
+    "SETUP_FIRST.bat", "START_Analysis.bat",
+    "requirements-windows.txt",
+    "puyo_tools/app.py", "puyo_tools/record_store.py", "puyo_tools/crop_suggest.py",
     "puyo_tools/common/__init__.py", "puyo_tools/common/analysis.py",
     "puyo_tools/common/engine.py", "puyo_tools/common/image_board.py",
     "puyo_tools/common/reference.py", "puyo_tools/common/time_calc.py",
@@ -40,11 +40,8 @@ def main():
             for pattern in SENSITIVE:
                 if re.search(pattern, content):
                     raise RuntimeError(f"Review potential secret in {name}")
-    app = (ROOT / "review.py").read_text(encoding="utf-8")
-    for entry in ("def open_youtube(self):", "def launch_youtube_player(self,url,start_ms=0):"):
-        pos = app.index(entry) + len(entry)
-        if "return" not in app[pos:pos+170]:
-            raise RuntimeError(f"YouTube not disabled: {entry}")
+    if any("youtube" in name.lower() or name in ("review.py", "START_Review.bat") for name in FILES):
+        raise RuntimeError("Analysis-only ZIP includes review/YouTube entry point")
     with ZipFile(OUT, "w", ZIP_DEFLATED) as z:
         for name in FILES:
             z.write(ROOT / name, f"PuyoReview-Source-Windows-v1.0.0/{name}")
