@@ -17,14 +17,23 @@
 - [x] ソースZIP PuyoReview-Source-Windows-v1.0.0.zip がDraft添付済み（GitHub表示64,300バイト）
 - [x] Private / Public 両リポジトリで同じパスの主要ソースをGit blob SHAで照合（21ファイル一致）
 
+## YouTube機能を初回公開から除外する決定（2026-10-13）
+- [x] ユーザー判断：YouTube機能なしで初回公開する
+- [x] GitHub公開用 review.py の起動ボタンを除去し、YouTube起動メソッドを無効化
+- [x] README.md、RELEASE_NOTES_SOURCE.md にYouTube機能無効を明示
+- [ ] **重要：Draftに添付されたソースZIPは変更前のまま。更新済みreview.pyを含むZIPを再生成・再添付するまで公開しない**
+- [ ] 最終ZIP内でYouTubeプレイヤー関連のコードを配布する必要があるか再確認（機能停止済みだがソース自体は現在リポジトリ内に存在）
+
 ## 公開前の必須確認と作業
 - [ ] 実機確認したZIPとRelease添付ZIPが同一か、SHA-256等で照合する（GitHub添付ZIPのバイト単位検証は未実施）
 - [ ] 旧EXE版の2つのZIP（PuyoReview-Windows.zip / PuyoAnalysis-Windows.zip）をDraftから削除または別Releaseへ分離する
 - [ ] Release本文を RELEASE_NOTES_SOURCE.md に基づくソース版説明へ変更する
 - [ ] 利用した第三者ソース・画像の由来と必要なライセンス表示を最終確認する
-- [ ] YouTube埋め込みプレイヤーの画面キャプチャ・画像処理機能がYouTube API Servicesの規約に適合するか判断する。規約上の懸念が残れば当該機能を変更・除外する
+- [x] YouTube機能は初回公開から除外する方針を決定（レビューUIと起動経路を無効化。ZIP反映は未完了）
 - [ ] 最終配布ZIPのファイル一覧、個人情報、API鍵、不要なバイナリ・Git履歴が含まれないことを確認する
 - [ ] 以上を確認したうえで Publish release（現状Draft維持）
+
+- [ ] YouTube無効化後の最終ZIPで、MP4再生・解析・記録の簡易スモークテストを実施
 
 ## 任意の追加テスト
 - [ ] 別Windows PC、またはクリーンなPython 3.12環境で再現確認
