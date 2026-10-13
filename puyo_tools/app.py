@@ -1183,6 +1183,17 @@ class App(tk.Tk):
                 window.destroy()
                 messagebox.showinfo('復元','盤面とNEXTを復元しました。保存済み解析結果は記録JSONにも残っています。')
             except Exception as exc:messagebox.showerror('復元エラー',str(exc),parent=window)
+        def details():
+            if not chosen():return
+            try:
+                item=record_store.load(chosen())
+                dialog=tk.Toplevel(window);dialog.title('保存した記録の詳細')
+                dialog.geometry('780x550')
+                detail=tk.Text(dialog,wrap='word')
+                detail.pack(fill='both',expand=True,padx=8,pady=8)
+                detail.insert('1.0',json.dumps(item,ensure_ascii=False,indent=2))
+                detail.configure(state='disabled')
+            except Exception as exc:messagebox.showerror('記録詳細',str(exc),parent=window)
         def make_folder():
             value=simpledialog.askstring('新規フォルダ','フォルダ名',parent=window)
             if not value:return
@@ -1190,21 +1201,21 @@ class App(tk.Tk):
             except Exception as exc:messagebox.showerror('フォルダ',str(exc),parent=window)
         def move():
             if not chosen():return
-            destination=tk.simpledialog.askstring('移動','移動先フォルダ名：'+', '.join(record_store.folders()),parent=window)
+            destination=simpledialog.askstring('移動','移動先フォルダ名：'+', '.join(record_store.folders()),parent=window)
             if not destination:return
             try:record_store.move(chosen(),destination);refresh()
             except Exception as exc:messagebox.showerror('移動エラー',str(exc),parent=window)
         def edit():
             if not chosen():return
             item=record_store.load(chosen())
-            new_name=tk.simpledialog.askstring('名前を変更','名前',initialvalue=item['name'],parent=window)
+            new_name=simpledialog.askstring('名前を変更','名前',initialvalue=item['name'],parent=window)
             if new_name is None:return
-            new_memo=tk.simpledialog.askstring('メモを編集','メモ',initialvalue=item.get('memo',''),parent=window)
+            new_memo=simpledialog.askstring('メモを編集','メモ',initialvalue=item.get('memo',''),parent=window)
             if new_memo is None:return
             try:record_store.update(chosen(),new_name,new_memo);refresh()
             except Exception as exc:messagebox.showerror('編集エラー',str(exc),parent=window)
         controls=ttk.Frame(window);controls.pack(fill='x',padx=10,pady=8)
-        for label,callback in [('盤面を復元',restore),('新規フォルダ',make_folder),('フォルダへ移動',move),('名前・メモ編集',edit),('一覧を更新',refresh)]:
+        for label,callback in [('盤面を復元',restore),('新規フォルダ',make_folder),('フォルダへ移動',move),('名前・メモ編集',edit),('解析結果・詳細',details),('一覧を更新',refresh)]:
             ttk.Button(controls,text=label,command=callback).pack(side='left',padx=4)
         table.bind('<Double-Button-1>',lambda _:restore())
         combo.bind('<<ComboboxSelected>>',refresh)
