@@ -1,24 +1,37 @@
-# v1.0.0 ソース版の公開前チェック（配布管理者向け）
+# v1.0.0 ソース版の公開前チェック（2026-10-13 更新）
 
-## Release下書き
-- [ ] 旧EXE配布用の `PuyoReview-Windows.zip` と `PuyoAnalysis-Windows.zip` をDraftから削除する
-- [ ] 新しい `PuyoReview-Source-Windows-v1.0.0.zip` をRelease assetsに添付する
-- [ ] Release notesをソース版用の説明に変更する（EXE起動の手順を残さない）
-- [ ] GitHub上のREADMEからの導線・ZIPの中身が一致することを確認する
-- [ ] 実機テスト後に `Publish release` する（現時点ではDraft維持）
+## Windows実機チェック（ユーザー確認済み）
+- [x] 新しいZIPを別フォルダに展開して SETUP_FIRST.bat で Libraries OK / Setup complete
+- [x] START_Analysis.bat で盤面入力、連鎖STATS、3手全探索
+- [x] START_Review.bat でMP4再生、盤面キャプチャ
+- [x] YouTube再生・一時停止・盤面取り込み
+- [x] 振り返り記録の保存とアプリ再起動後の読み込み
 
-## 利用者環境で試す
-- [ ] Python 3.13.14で `SETUP_FIRST.bat` を実行し、バージョン警告が出た後も `Libraries OK` と `Setup complete` まで到達する
-- [ ] `START_Analysis.bat` で手入力→連鎖STATS→NEXT3組の3手全探索→結果画面を確認する
-- [ ] `START_Review.bat` でMP4の再生・停止・画像取り込みを確認する
-- [ ] YouTube URLから動画を再生し、停止・盤面への取り込みを確認する
-- [ ] 振り返り記録を保存し、再起動後も開けることを確認する
-- [ ] 新しいフォルダに展開し、既存の`.venv`に依存せずセットアップを完了できることを確認する
+## GitHub側の確認
+- [x] 開発元 Volterrappi/PuyoReview はPrivateのまま
+- [x] 公開用 Volterrappi/PuyoReview-Release はPublic
+- [x] 公開用READMEにセットアップ手順・既知の制約を記載
+- [x] バージョン固定の requirements-windows.txt がある
+- [x] TERMS.md と THIRD_PARTY_NOTICES.md がある
+- [x] Release v1.0.0 はDraft（未公開）
+- [x] ソースZIP PuyoReview-Source-Windows-v1.0.0.zip がDraft添付済み（GitHub表示64,300バイト）
+- [x] Private / Public 両リポジトリで同じパスの主要ソースをGit blob SHAで照合（21ファイル一致）
 
-## 留意点
-- **開発用PrivateリポジトリをPublicにしないこと**（旧コミットのメールアドレスが露出するため）
-- ソース版のZIPには開発Git履歴・第三者バイナリを含めない
-- コードを公開することと、MIT等による自由な改変・再配布許可は別。利用条件は `TERMS.md`
-- 開発者が確認できていない環境・機能については「動作保証」と書かない
+## 公開前の必須確認と作業
+- [ ] 実機確認したZIPとRelease添付ZIPが同一か、SHA-256等で照合する（GitHub添付ZIPのバイト単位検証は未実施）
+- [ ] 旧EXE版の2つのZIP（PuyoReview-Windows.zip / PuyoAnalysis-Windows.zip）をDraftから削除または別Releaseへ分離する
+- [ ] Release本文を RELEASE_NOTES_SOURCE.md に基づくソース版説明へ変更する
+- [ ] 利用した第三者ソース・画像の由来と必要なライセンス表示を最終確認する
+- [ ] YouTube埋め込みプレイヤーの画面キャプチャ・画像処理機能がYouTube API Servicesの規約に適合するか判断する。規約上の懸念が残れば当該機能を変更・除外する
+- [ ] 最終配布ZIPのファイル一覧、個人情報、API鍵、不要なバイナリ・Git履歴が含まれないことを確認する
+- [ ] 以上を確認したうえで Publish release（現状Draft維持）
 
-確認時に問題があれば、ZIPはそのままDraftに置き、修正して差し替える。
+## 任意の追加テスト
+- [ ] 別Windows PC、またはクリーンなPython 3.12環境で再現確認
+- [ ] 異常URL、破損MP4、空入力などのエラー処理を確認
+
+## 注意
+- 開発用PrivateリポジトリをPublicにしない（Git履歴に個人メールアドレスの懸念）。
+- Private側の scripts/package_source_release.py は旧24ファイル構成で、公開用セットアップBATを含まない。現在のWindows用配布ZIP生成方法として再利用しない。
+- 自作コードの公開条件はTERMS.md（MIT等のオープンソース許諾ではない）。
+- 現在のRelease Draftには旧EXE版ZIPが残り、本文も旧EXE版について述べている。確認前にPublishしない。
