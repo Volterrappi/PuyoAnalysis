@@ -1,59 +1,86 @@
 # PuyoReview — ぷよぷよ録画振り返り・盤面解析ツール
 
-Windows向けの非公式ぷよぷよ振り返り・盤面解析ツールです。**ソースコードは公開していません。** ダウンロード・実行用ファイルは [Releases](https://github.com/Volterrappi/PuyoReview-Release/releases) で配布します。
+ぷよぷよeスポーツの対戦動画を振り返り、盤面を解析するWindows向けの**非公式ツール**です。
 
-> **重要**：正式なZIPファイルがReleasesに掲載されるまでは、ダウンロードリンクは準備中です。GitHubの「Code → Download ZIP」はプログラムの配布ファイルではありません。
+**Pythonのソースコードを公開する方針です。** 初めてPythonを使う人も、下の手順どおりに進めれば起動できるようにしています。
 
-## ダウンロード（Windows）
+> **公開準備中**：初心者向けソースZIP `PuyoReview-Source-v1.0.0-EasySetup.zip` は作成済みですが、現時点でGitHub Releaseへの登録・一般公開はまだ行っていません。配布準備が整うまではダウンロードできません。GitHubの「Code → Download ZIP」には起動に必要な配布ファイルが揃っていない場合があります。
 
-| ファイル | 内容 |
+## はじめかた（Windows 10/11・64bit）
+
+### 1. Python 3.12を入れる（最初の1回だけ）
+
+[Python公式サイト](https://www.python.org/downloads/) から**Python 3.12（64bit）**をインストールします。インストール画面に **Python Launcher** があれば有効にしてください。
+
+Windowsの「コマンドプロンプト」を開き、次を入力します。
+
+```cmd
+py -3.12 --version
+```
+
+`Python 3.12.x` と表示されたら準備OK。Python 3.13/3.14しか入っていない場合は、3.12も追加でインストールしてください。
+
+### 2. ソースZIPをダウンロードして展開
+
+[GitHub Releases](https://github.com/Volterrappi/PuyoReview-Release/releases) に今後掲載する **`PuyoReview-Source-v1.0.0-EasySetup.zip`** をダウンロードし、右クリック→「すべて展開」します。
+
+### 3. `SETUP_FIRST.bat` をダブルクリック
+
+展開したフォルダにある **`SETUP_FIRST.bat`** をダブルクリックすると、必要なライブラリを自動インストールします。Python以外のライブラリを一つずつ手動で入れる必要はありません。
+
+初回のみインターネット接続が必要です。黒い画面に `Libraries OK` と `Setup complete` が出たら成功。
+
+`.venv` という専用フォルダへインストールするので、PC内の他のPython環境とは分けて管理されます。
+
+### 4. 起動したいツールをダブルクリック
+
+| 起動ファイル | 内容 |
 | --- | --- |
-| `PuyoReview-Windows.zip` | 録画振り返り、MP4再生、YouTube再生、盤面解析を含む全体版 |
-| `PuyoAnalysis-Windows.zip` | 盤面の手入力・画像読み込み、連鎖STATS、1〜3手のうち**現行v28では3手**の全探索を行う解析単体版 |
+| `START_Review.bat` | 動画振り返り＋盤面解析の全体版 |
+| `START_Analysis.bat` | 盤面解析だけの単体版 |
 
-いずれもWindows向けの**ZIP展開型**です。通常はPythonの別途インストールは不要です。
-
-## はじめかた
-
-1. [Releases](https://github.com/Volterrappi/PuyoReview-Release/releases) から希望するZIPをダウンロードする。
-2. **展開する前に**、ZIPを右クリック →「プロパティ」→「全般」に「許可する／ブロックの解除」が表示されていれば、配布元を確認したうえでチェックして適用する。
-3. ZIPを展開する。
-4. 全体版なら `起動_PuyoReview.bat`、解析単体版なら `起動_解析ツール.bat` から起動する。
-
-展開後のフォルダの構成は変更しないでください。EXEや内部DLLを単独で移動すると動かないことがあります。
-
-**注意**：ブロック解除は、このリポジトリの正規配布物と確認できた場合に限って行ってください。セキュリティソフトの警告が不審な場合は、無理に解除・無効化せず、内容を確認してください。配布するEXEにはコード署名がありません。
+**次回からはセットアップ不要**。使いたいSTARTファイルをダブルクリックするだけです。
 
 ## 主な機能（v28）
 
-- 手入力・スクリーンショット・クリップボード画像からの盤面入力
-- 連鎖の得点・フレーム数・効率などの表示、連鎖アニメーション
-- NEXT3組を使った3手全探索、配置位置の枠表示、盤面推移から入力盤面へのコピー
-- 13段目に軸ぷよ、14段目に子ぷよを置く場合の候補表示（近似）
-- 盤面＋NEXTをテキスト保存・復元
-- 全体版ではMP4・YouTube動画からの振り返り記録の作成と再解析
+- MP4・YouTubeの対戦動画を再生して盤面キャプチャ・振り返り記録を作成（全体版）
+- 手入力、画像ファイル、クリップボード画像からの盤面認識
+- 連鎖数・得点・フレーム数・効率の表示と連鎖アニメーション
+- NEXT3組を用いた3手全探索と、盤面推移の表示
+- 盤面・NEXTの保存と復元
 
-**計算上の制約**：ぷよの操作・回し入れの厳密な到達可能性判定や、14段目の後続への影響は完全には再現していません。候補や数値は参考として確認してください。現行v28の全探索はNEXT3組が必要です。1手・2手探索や操作導線改善は今後の予定です。
+## うまく起動しないとき
 
-## 動作環境と既知の注意点
+| 表示・症状 | 対処 |
+| --- | --- |
+| `Python 3.12 (64-bit) ... not found` | Python公式サイトから3.12（64bit）とPython Launcherを入れる |
+| `Installation failed` | インターネット・ディスク空き容量を確認し、`SETUP_FIRST.bat` を再実行 |
+| `ModuleNotFoundError` | セットアップが完了していない可能性あり。`SETUP_FIRST.bat` を再実行 |
+| YouTube画面が出ない | [Microsoft WebView2 Runtime](https://developer.microsoft.com/microsoft-edge/webview2/) を確認。埋め込み制限のある動画もあります |
 
-- 対象：Windows 10 / 11（64bitを想定）
-- YouTube再生にはMicrosoft Edge **WebView2 Runtime** が必要になる場合があります。
-- WindowsがZIP内のDLLにダウンロード元のブロック情報を付与した場合、YouTube再生が失敗することがあります。上記の「展開前の許可する」で解決した例があります。
-- MP4再生は現行版で**映像のみ（音声なし）**です。
-- YouTube再生は公式埋め込みプレイヤーを利用し、動画をダウンロードしません。
-- 記録データの保存先は `%USERPROFILE%\PuyoReview` です。アプリの更新時にこのフォルダを削除しないでください。
+再セットアップする場合は、アプリ終了後に展開フォルダ内の **`.venv` だけ**を削除して `SETUP_FIRST.bat` を再実行してください。
 
-## ライセンス表示
+保存済みの記録は `%USERPROFILE%\PuyoReview` に置かれます。更新や再セットアップ時にこのフォルダを削除しないでください。
 
-配布ZIPには、同梱ライブラリのライセンス文書をまとめた `THIRD_PARTY_LICENSES/` を収録しています。最新ビルドに含まれる依存関係の文書を確認してください。
+## 技術的な説明（慣れている方向け）
 
-## 利用条件・開発について
+Windows + Python 3.12、GUIはTkinter・pywebview、画像処理はPillow・OpenCV、Windows連携はpythonnetです。依存ライブラリは `requirements-windows.txt` に動作確認済みのバージョンを固定しています。
 
-個人利用のための無償配布です。**ソースコードは公開しておらず、オープンソースライセンス（MITなど）では配布していません**。利用条件は [TERMS.md](TERMS.md) を確認してください。
+```powershell
+py -3.12 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements-windows.txt
+.\.venv\Scripts\python.exe review.py
+```
 
-製品名・ゲーム素材等の権利は各権利者に帰属します。本ツールは非公式のファン制作ツールであり、ゲームの制作・販売元による公認・提携製品ではありません。
+盤面解析だけなら `.\.venv\Scripts\python.exe puyo_tools\app.py` です。
 
-同梱する第三者ライブラリは各ライブラリのライセンスに従います。主な構成と注意事項は [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) を参照してください。
+## 注意事項・利用条件
 
-不具合や機能要望は [X（@istnpypy）](https://x.com/istnpypy) または [GitHub Issues](https://github.com/Volterrappi/PuyoReview-Release/issues) へお願いします。報告時には個人情報、APIキー、動画の非公開URLなどを投稿しないようにしてください。
+- MP4再生は現状、映像のみ（音声なし）。
+- 全探索ではゲーム内の操作可能性や回し入れを厳密には判定していません。置けない候補が含まれる場合があります。
+- YouTubeは公式埋め込みプレイヤーを利用し、動画をダウンロードしません。
+- これはファン制作の非公式ツールです。ゲームや名称等の権利は各権利者に帰属します。
+- **ソース公開とMITなどのオープンソースライセンスでの配布は別です。** 現在、独自ソース・自作画像は閲覧と個人利用を許可する条件で準備しています。詳しくは [TERMS.md](TERMS.md)。
+- 外部依存は各ライブラリのライセンスに従います。[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) を参照してください。
+
+不具合・機能要望は [X：@istnpypy](https://x.com/istnpypy) または [GitHub Issues](https://github.com/Volterrappi/PuyoReview-Release/issues) へお願いします。
