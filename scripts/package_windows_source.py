@@ -1,0 +1,59 @@
+"""Build a source-only Windows ZIP for the YouTube-disabled initial release."""
+from pathlib import Path
+from zipfile import ZipFile, ZIP_DEFLATED
+import ast
+import hashlib
+import re
+
+ROOT = Path(__file__).resolve().parents[1]
+ARCHIVE_NAME = "PuyoReview-Source-Windows-v1.0.0.zip"
+OUT = ROOT / "dist" / ARCHIVE_NAME
+FILES = [
+    "README.md", "TERMS.md", "THIRD_PARTY_NOTICES.md",
+    "SETUP_FIRST.bat", "START_Analysis.bat", "START_Review.bat",
+    "requirements-windows.txt", "review.py",
+    "puyo_tools/app.py", "puyo_tools/review_crop.py",
+    "puyo_tools/common/__init__.py", "puyo_tools/common/analysis.py",
+    "puyo_tools/common/engine.py", "puyo_tools/common/image_board.py",
+    "puyo_tools/common/reference.py", "puyo_tools/common/time_calc.py",
+    "puyo_tools/assets/small.png", "puyo_tools/assets/large.png",
+    "puyo_tools/assets/red.png", "puyo_tools/assets/star.png",
+    "puyo_tools/assets/moon.png", "puyo_tools/assets/crown.png",
+]
+BANNED = ("youtube_player.py", "youtube_capture.py", "youtube_dock.py", "webview_host.py")
+SENSITIVE = (
+    r"-----BEGIN (?:RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----",
+    r"(?i)[a-z0-9._%+-]+@(?!users\\.noreply\\.github\\.com)[a-z0-9.-]+\\.[a-z]{2,}",
+    r"(?i)[a-z]:\\\\Users\\\\[^\\\\]+\\\\",
+)
+
+def main():
+    OUT.parent.mkdir(exist_ok=True)
+    for name in FILES:
+        p = ROOT / name
+        if not p.is_file():
+            raise RuntimeError(f"Missing: {name}")
+        if p.suffix == ".py":
+            ast.parse(p.read_text(encoding="utf-8-sig"), filename=name)
+        if p.suffix.lower() in (".py", ".md", ".txt", ".bat"):
+            content = p.read_text(encoding="utf-8-sig")
+            for pattern in SENSITIVE:
+                if re.search(pattern, content):
+                    raise RuntimeError(f"Review potential secret in {name}")
+    app = (ROOT / "review.py").read_text(encoding="utf-8")
+    for entry in ("def open_youtube(self):", "def launch_youtube_player(self,url,start_ms=0):"):
+        pos = app.index(entry) + len(entry)
+        if "return" not in app[pos:pos+170]:
+            raise RuntimeError(f"YouTube not disabled: {entry}")
+    with ZipFile(OUT, "w", ZIP_DEFLATED) as z:
+        for name in FILES:
+            z.write(ROOT / name, f"PuyoReview-Source-Windows-v1.0.0/{name}")
+    with ZipFile(OUT) as z:
+        assert z.testzip() is None
+        names = z.namelist()
+        assert len(names) == len(FILES)
+        assert not any(any(b in n for b in BANNED) for n in names)
+    print(f"Created {OUT} ({OUT.stat().st_size} bytes)")
+    print(f"SHA256: {hashlib.sha256(OUT.read_bytes()).hexdigest()}")
+if __name__ == "__main__":
+    main()
