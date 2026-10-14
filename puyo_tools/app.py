@@ -6,6 +6,7 @@ from queue import Queue, Empty
 from collections import defaultdict
 import csv
 import json
+import os
 import sys
 from pathlib import Path
 from PIL import Image, ImageTk, ImageGrab
@@ -1183,17 +1184,18 @@ class App(tk.Tk):
                 window.destroy()
                 messagebox.showinfo('復元','盤面とNEXTを復元しました。保存済み解析結果は記録JSONにも残っています。')
             except Exception as exc:messagebox.showerror('復元エラー',str(exc),parent=window)
-        def details():
+        def open_saved_file(kind):
             if not chosen():return
             try:
                 item=record_store.load(chosen())
-                dialog=tk.Toplevel(window);dialog.title('保存した記録の詳細')
-                dialog.geometry('780x550')
-                detail=tk.Text(dialog,wrap='word')
-                detail.pack(fill='both',expand=True,padx=8,pady=8)
-                detail.insert('1.0',json.dumps(item,ensure_ascii=False,indent=2))
-                detail.configure(state='disabled')
-            except Exception as exc:messagebox.showerror('記録詳細',str(exc),parent=window)
+                target=(record_store.ROOT/item['folder']/item['id']/'record.json'
+                        if kind=='json' else Path(item.get('screenshot') or ''))
+                if kind=='image' and not item.get('screenshot'):
+                    messagebox.showinfo('保存画像','この記録には画像がありません。',parent=window)
+                    return
+                if not target.is_file():raise FileNotFoundError(str(target))
+                os.startfile(str(target))
+            except Exception as exc:messagebox.showerror('ファイルを開く',str(exc),parent=window)
         def make_folder():
             value=simpledialog.askstring('新規フォルダ','フォルダ名',parent=window)
             if not value:return
@@ -1215,12 +1217,29 @@ class App(tk.Tk):
             try:record_store.update(chosen(),new_name,new_memo);refresh()
             except Exception as exc:messagebox.showerror('編集エラー',str(exc),parent=window)
         controls=ttk.Frame(window);controls.pack(fill='x',padx=10,pady=8)
-        for label,callback in [('盤面を復元',restore),('新規フォルダ',make_folder),('フォルダへ移動',move),('名前・メモ編集',edit),('解析結果・詳細',details),('一覧を更新',refresh)]:
-            ttk.Button(controls,text=label,command=callback).pack(side='left',padx=4)
+        ttk.Button(controls,text='新規フォルダ',command=make_folder).pack(side='left',padx=4)
+        selection_buttons=[]
+        for label,callback in [('盤面を復元',restore),('フォルダへ移動',move),
+                               ('名前・メモ編集',edit),('JSONを開く',lambda:open_saved_file('json')),
+                               ('画像を開く',lambda:open_saved_file('image'))]:
+            button=ttk.Button(controls,text=label,command=callback,state='disabled')
+            button.pack(side='left',padx=4)
+            selection_buttons.append((label,button))
+        ttk.Button(controls,text='一覧を更新',command=refresh).pack(side='left',padx=4)
+        def update_buttons(*_):
+            record_id=chosen()
+            has_image=False
+            if record_id:
+                try:has_image=bool(record_store.load(record_id).get('screenshot'))
+                except Exception:pass
+            for label,button in selection_buttons:
+                button.configure(state='normal' if record_id and (label!='画像を開く' or has_image) else 'disabled')
+        table.bind('<<TreeviewSelect>>',update_buttons)
         table.bind('<Double-Button-1>',lambda _:restore())
         combo.bind('<<ComboboxSelected>>',refresh)
         search.trace_add('write',refresh)
         refresh()
+        update_buttons()
 
     def save_review(self):
         if self.review_session is None:
