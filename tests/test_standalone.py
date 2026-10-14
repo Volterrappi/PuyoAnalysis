@@ -6,6 +6,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "puyo_tools"))
 import record_store
 import crop_suggest
+from common.reference import TA_PACES, four_clear_at_height, four_clear_rows
 import tenpai_probe
 
 EMPTY = ["......"] * 13
@@ -37,6 +38,18 @@ class RecordsTests(unittest.TestCase):
         self.assertTrue(any(r["column"]==4 and r["pieces"]=="R" and r["chains"]>=1 for r in results))
         self.assertFalse(any(r["pieces"].startswith("O") for r in results))
         self.assertEqual(tenpai_probe.probe(tuple(EMPTY)),[])
+
+    def test_reference_efficiency_benchmarks(self):
+        self.assertAlmostEqual(TA_PACES[120], 10_000_000/(120*60))
+        self.assertAlmostEqual(TA_PACES[100], 10_000_000/(100*60))
+        self.assertAlmostEqual(TA_PACES[80], 10_000_000/(80*60))
+        for height in (0, 5, 12):
+            for chain in (3, 4, 5):
+                baseline = four_clear_at_height(chain, height)
+                self.assertGreater(baseline['efficiency'], 0)
+                self.assertEqual(baseline['remaining'], 6*height)
+        self.assertNotEqual(four_clear_at_height(3,0)['efficiency'],
+                            four_clear_at_height(3,5)['efficiency'])
 
     def test_crop_suggestion(self):
         self.assertIn("1P",crop_suggest.suggest(1920,1080))
