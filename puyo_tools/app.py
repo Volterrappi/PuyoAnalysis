@@ -16,7 +16,7 @@ from crop_suggest import suggest as suggest_crop
 from common.analysis import candidate_stats, group_by_score, detail_row, matches_filters
 from common.engine import *
 from common.image_board import recognize_board, recognize_esports_next
-from common.reference import nuisance, nuisance_label, nuisance_parts, four_clear_rows, double_rows, multi_rows
+from common.reference import nuisance, nuisance_label, nuisance_parts, four_clear_rows, double_rows, multi_rows, TA_PACES, four_clear_at_height
 
 PALETTE = {'.':'#202634','R':'#e94f58','B':'#438be5','G':'#4fc475','Y':'#f6d451','P':'#ba73e6','O':'#999fa9'}
 NAMES = {'.':'消去','R':'赤','B':'青','G':'緑','Y':'黄','P':'紫','O':'おじゃま'}
@@ -832,15 +832,14 @@ class App(tk.Tk):
         window.title('基準火力・効率（4個消し / 2ダブ・2トリ・2クア）')
         window.geometry('1120x720')
         ttk.Label(window,text='おじゃま表示：王冠=720個 / 月=360個 / 星=180個 / 赤玉=30個 / 大玉=6個 / 小玉=1個（70点=1個）').pack(anchor='w',padx=10,pady=(8,0))
-        baseline=next(r['efficiency'] for r in four_clear_rows() if r['chain']==5)
-        ttk.Label(window,text=f'濃い背景：4個消し5連鎖（{baseline:,.2f} 点/秒）より高効率 ｜ 効率が低い順').pack(anchor='w',padx=10,pady=(3,0))
+        ttk.Label(window,text='効率比較：4個消し＝1000万TA（120/100/80分ペース）／2ダブ系＝同じ残し高さの4個消し3・4・5連鎖').pack(anchor='w',padx=10,pady=(3,0))
         notebook=ttk.Notebook(window);notebook.pack(fill='both',expand=True,padx=8,pady=8)
         four=ttk.Frame(notebook);multiple=ttk.Frame(notebook)
         notebook.add(four,text='4個消し 1〜19連鎖')
         notebook.add(multiple,text='2ダブ・2トリ・2クア')
         ttk.Label(four,text='各連鎖4個消し / 毎回1段落下80F / 連鎖後1個残り / 全消しボーナスなし').pack(anchor='w',padx=5,pady=5)
 
-        def make_table(parent, rows, multiple_groups=False):
+        def make_table(parent, rows, multiple_groups=False, reference_height=5):
             # Limit Tk widget count, especially for the 705 multi-clear rows.
             PAGE_ROWS=36
             holder=ttk.Frame(parent);holder.pack(fill='both',expand=True,padx=5,pady=5)
@@ -860,12 +859,12 @@ class App(tk.Tk):
             content.bind('<Configure>',lambda e:canvas.configure(scrollregion=canvas.bbox('all')))
             canvas.bind('<Configure>',lambda e:canvas.itemconfigure(window_id,width=e.width))
             labels=(['種類','連結数'] if multiple_groups else ['連鎖数'])
-            labels+=['得点','おじゃま表示','連鎖時間(秒)','連鎖時間＋補充時間(秒)','効率(点/秒)']
+            labels+=['得点','おじゃま表示','連鎖時間(秒)','連鎖時間＋補充時間(秒)','効率(点/秒)','基準効率との比較']
             for j,title in enumerate(labels):
                 ttk.Label(content,text=title,font=('',10,'bold'),padding=(8,7)).grid(row=0,column=j,sticky='w')
             nuisance_col=3 if multiple_groups else 2
             content.columnconfigure(nuisance_col,weight=1)
-            state={'data':[],'page':0}
+            state={'data':[],'page':0,'height':reference_height}
             def wheel(event):
                 if getattr(event,'num',None) in (4,5):
                     direction=-1 if event.num==4 else 1
@@ -890,7 +889,14 @@ class App(tk.Tk):
                 prev.configure(state='normal' if page>0 else 'disabled')
                 next_btn.configure(state='normal' if page+1<pages else 'disabled')
                 for i,row in enumerate(subset,1):
-                    background='#c4d5e6' if row['efficiency']>baseline else '#f2f5f9'
+                    if multiple_groups:
+                        baselines=[four_clear_at_height(n,state['height'])['efficiency'] for n in (3,4,5)]
+                        comparison=' / '.join(f'{n}連:{row["efficiency"]/b:.2f}倍' if b>0 else f'{n}連:―' for n,b in zip((3,4,5),baselines))
+                        passed=sum(row['efficiency']>=b for b in baselines)
+                    else:
+                        comparison=' / '.join(f'{m}分:{row["efficiency"]/b:.2f}倍' for m,b in TA_PACES.items())
+                        passed=sum(row['efficiency']>=b for b in TA_PACES.values())
+                    background='#c4d5e6' if passed==3 else '#e5edf5' if passed>0 else '#f2f5f9'
                     values=([row['kind'],row['groups']] if multiple_groups else [f"{row['chain']}連鎖"])
                     values.append(f"{row['score']:,}")
                     for j,value in enumerate(values):
@@ -898,7 +904,7 @@ class App(tk.Tk):
                     ojama_holder=tk.Frame(content,bg=background)
                     ojama_holder.grid(row=i,column=nuisance_col,sticky='nsew')
                     self.ojama_display(ojama_holder,row['score'],compact=True).pack(anchor='w',padx=8,pady=3)
-                    time_values=[f"{row['frames']/60:.3f}",f"{row['seconds']:.3f}",f"{row['efficiency']:,.2f}"]
+                    time_values=[f"{row['frames']/60:.3f}",f"{row['seconds']:.3f}",f"{row['efficiency']:,.2f}",comparison]
                     for j,value in enumerate(time_values,nuisance_col+1):
                         tk.Label(content,text=value,bg=background,fg='#162533',padx=8,pady=4,anchor='w').grid(row=i,column=j,sticky='nsew')
                 bind_wheel(content)
@@ -907,12 +913,14 @@ class App(tk.Tk):
             prev.configure(command=lambda:change_page(-1))
             next_btn.configure(command=lambda:change_page(1))
             for ev in ('<MouseWheel>','<Button-4>','<Button-5>'):canvas.bind(ev,wheel)
-            def fill(data):
+            def fill(data,reference_height=None):
+                if reference_height is not None:state['height']=reference_height
                 state['data']=sorted(data,key=lambda row:(row['efficiency'],row['score']))
                 state['page']=0
                 show_page()
             fill(rows)
             return fill
+        ttk.Label(four,text='基準効率：120分 = 1,388.89 ／ 100分 = 1,666.67 ／ 80分 = 2,083.33 点/秒（倍率1.00以上で基準達成）').pack(anchor='w',padx=5)
         make_table(four,four_clear_rows())
         options=ttk.Frame(multiple);options.pack(fill='x',padx=5,pady=5)
         ttk.Label(options,text='連鎖後の高さ（全6列均一）:').pack(side='left')
@@ -920,13 +928,19 @@ class App(tk.Tk):
         spin=tk.Spinbox(options,from_=0,to=12,width=4,textvariable=height);spin.pack(side='left',padx=5)
         ttk.Checkbutton(options,text='2連鎖目クイック（55F） / OFF: 1段落下（80F）',variable=quick).pack(side='left',padx=8)
         ttk.Label(multiple,text='1連鎖目: 4個消し・1段落下80F固定 / 2連鎖目: 異なる2〜4色の同時消し').pack(anchor='w',padx=5)
-        refresh_table=make_table(multiple,multi_rows(5,False),True)
+        benchmark_label=ttk.Label(multiple)
+        benchmark_label.pack(anchor='w',padx=5,pady=3)
+        refresh_table=make_table(multiple,multi_rows(5,False),True,reference_height=5)
         def refresh(*_):
-            try:refresh_table(multi_rows(int(height.get()),quick.get()))
+            try:
+                h=int(height.get())
+                benchmark_label.configure(text='同じ残し高さの4個消し：'+ ' / '.join(f'{n}連鎖 {four_clear_at_height(n,h)["efficiency"]:,.2f} 点/秒' for n in (3,4,5)))
+                refresh_table(multi_rows(h,quick.get()),reference_height=h)
             except (ValueError,tk.TclError):pass
         spin.configure(command=refresh)
         spin.bind('<KeyRelease>',refresh)
         quick.trace_add('write',refresh)
+        refresh()
 
     def start_search(self):
         if not self.load_board():return
