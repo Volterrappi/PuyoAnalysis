@@ -1216,6 +1216,25 @@ class App(tk.Tk):
             if new_memo is None:return
             try:record_store.update(chosen(),new_name,new_memo);refresh()
             except Exception as exc:messagebox.showerror('編集エラー',str(exc),parent=window)
+        def export_record_csv():
+            rows=record_store.list_records(None if folder.get()=='すべて' else folder.get())
+            keyword=search.get().lower()
+            rows=[r for r in rows if keyword in (r.get('name','')+' '+r.get('memo','')).lower()]
+            if not rows:
+                messagebox.showinfo('CSV出力','出力する記録がありません。',parent=window);return
+            path=filedialog.asksaveasfilename(parent=window,title='記録一覧をCSV保存',
+                defaultextension='.csv',initialfile='puyo_records.csv',
+                filetypes=[('CSVファイル','*.csv')])
+            if not path:return
+            try:
+                fields=['number','name','analysis_type','memo','saved_at','folder','id']
+                with open(path,'w',encoding='utf-8-sig',newline='') as stream:
+                    writer=csv.DictWriter(stream,fieldnames=fields)
+                    writer.writerow({'number':'採番','name':'名前','analysis_type':'解析種別',
+                                     'memo':'メモ','saved_at':'作成日時','folder':'フォルダ','id':'記録ID'})
+                    writer.writerows({k:r.get(k,'') for k in fields} for r in rows)
+                messagebox.showinfo('CSV出力',f'{len(rows)}件を保存しました。',parent=window)
+            except OSError as exc:messagebox.showerror('CSV出力',str(exc),parent=window)
         controls=ttk.Frame(window);controls.pack(fill='x',padx=10,pady=8)
         ttk.Button(controls,text='新規フォルダ',command=make_folder).pack(side='left',padx=4)
         selection_buttons=[]
@@ -1226,6 +1245,7 @@ class App(tk.Tk):
             button.pack(side='left',padx=4)
             selection_buttons.append((label,button))
         ttk.Button(controls,text='一覧を更新',command=refresh).pack(side='left',padx=4)
+        ttk.Button(controls,text='記録一覧をCSV保存',command=export_record_csv).pack(side='left',padx=4)
         def update_buttons(*_):
             record_id=chosen()
             has_image=False
