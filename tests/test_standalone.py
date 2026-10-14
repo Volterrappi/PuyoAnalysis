@@ -18,7 +18,7 @@ class RecordsTests(unittest.TestCase):
     def tearDown(self):
         self.temp.cleanup()
     def test_save_restore_move_edit(self):
-        record_store.add_folder("対戦A")
+        self.assertEqual(record_store.add_folder("対戦A"), "対戦A")
         item=record_store.save("未分類","3:15","盤面のみ","memo",EMPTY,["RB","GY","RP"],{"type":"盤面のみ"})
         loaded=record_store.load(item["id"])
         self.assertEqual(loaded["board"], EMPTY)
