@@ -11,6 +11,7 @@ import sys
 from pathlib import Path
 from PIL import Image, ImageTk, ImageGrab
 import record_store
+from tenpai_probe import probe as tenpai_probe
 from crop_suggest import suggest as suggest_crop
 from common.analysis import candidate_stats, group_by_score, detail_row, matches_filters
 from common.engine import *
@@ -283,6 +284,7 @@ class App(tk.Tk):
         self.review_save_btn.pack(fill='x',pady=(12,3))
         ttk.Button(left,text='現在の盤面・解析を記録',command=self.save_standalone).pack(fill='x',pady=3)
         ttk.Button(left,text='記録一覧・フォルダ管理',command=self.open_record_manager).pack(fill='x',pady=3)
+        ttk.Button(left,text='テンパイ探索（試作）',command=self.open_tenpai_probe).pack(fill='x',pady=3)
         self.review_csv=tk.BooleanVar(value=False)
         ttk.Checkbutton(left,text='3手全探索：CSVも保存（全候補）',variable=self.review_csv).pack(anchor='w',pady=3)
         self.initial_bonus=tk.BooleanVar(value=False)
@@ -1095,6 +1097,32 @@ class App(tk.Tk):
                      for t in chain.steps],
         }
 
+
+    def open_tenpai_probe(self):
+        """Experimental column-by-column ignition test; not a 3-pair solver."""
+        if not self.load_board():return
+        win=tk.Toplevel(self);win.title('テンパイ探索（試作・単一列）')
+        win.geometry('820x620')
+        ttk.Label(win,text='各列に任意の色1個、または「おじゃま→色」2個を置いた場合の発火を試します。',wraplength=780).pack(anchor='w',padx=10,pady=(10,2))
+        ttk.Label(win,text='NEXT・同時複数列・回し入れは考慮しません。連鎖数優先で表示します。',foreground='#9a5200',wraplength=780).pack(anchor='w',padx=10)
+        allow=tk.BooleanVar(value=True)
+        ttk.Checkbutton(win,text='おじゃま＋色の2個追加も含める',variable=allow).pack(anchor='w',padx=10,pady=5)
+        columns=('column','pieces','chains','score','frames')
+        table=ttk.Treeview(win,columns=columns,show='headings',height=18)
+        for key,title,width in [('column','列',90),('pieces','追加（下→上）',180),('chains','連鎖数',95),('score','得点',110),('frames','連鎖フレーム',130)]:
+            table.heading(key,text=title);table.column(key,width=width)
+        table.pack(fill='both',expand=True,padx=10,pady=8)
+        status=ttk.Label(win,text='');status.pack(anchor='w',padx=10)
+        def run():
+            table.delete(*table.get_children())
+            try:
+                results=tenpai_probe(self.current,allow.get())
+                for i,row in enumerate(results):
+                    table.insert('','end',iid=str(i),values=(row['column'],row['pieces'],row['chains'],row['score'],row['frames']))
+                status.configure(text=f'{len(results)}件の発火候補。結果は入力した盤面を変更しません。')
+            except Exception as exc:messagebox.showerror('テンパイ探索',str(exc),parent=win)
+        ttk.Button(win,text='この盤面で探索',command=run).pack(pady=(2,8))
+        run()
 
     def standalone_result(self):
         """Save a snapshot even when no exhaustive search candidate is selected."""
