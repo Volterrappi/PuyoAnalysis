@@ -16,12 +16,12 @@ def _atomic(path, value):
     tmp.replace(path)
 
 def _safe_name(name):
-    if "/" in str(name) or "\\\\" in str(name) or str(name).strip() in (".",".."):
-        raise ValueError("フォルダ名に区切り文字は使えません")
-    result = re.sub(r'[\\/:*?"<>|\\x00-\\x1f]', "_", str(name)).strip(" .")
-    if not result or result in (".", ".."):
+    value = str(name).strip(" .")
+    if not value or value in (".", ".."):
         raise ValueError("フォルダ名を入力してください")
-    return result[:70]
+    if any(ord(ch) < 32 or ch in '/\\:*?"<>|' for ch in value):
+        raise ValueError("フォルダ名に使えない文字があります")
+    return value[:70]
 
 def _inside(path):
     path = Path(path).resolve()
