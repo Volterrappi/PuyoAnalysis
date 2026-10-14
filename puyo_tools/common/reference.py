@@ -84,3 +84,23 @@ def multi_rows(height, quick, maximum=12, group_counts=(2,3,4)):
                          'groups':'+'.join(map(str,groups)),'group_count':count,
                          'sizes':groups,**_metrics(score,4+sum(groups),6*height,80+(55 if quick else 80))})
     return sorted(rows,key=lambda r:(r['efficiency'],r['score'],r['group_count'],r['sizes']))
+
+
+# Ten-million-point time-attack pace, expressed in points per second.
+TA_PACES = {minutes: 10_000_000 / (minutes * 60) for minutes in (120, 100, 80)}
+
+
+def four_clear_at_height(chain, height):
+    """4-puyo-per-link chain efficiency assuming the same residual height.
+
+    Uses the reference table's 80 frames per step and the standard
+    consumption-time correction. This is a normalized comparison, not a
+    claim that every board shape can produce the chain.
+    """
+    if not isinstance(chain, int) or not 1 <= chain <= 19:
+        raise ValueError('連鎖数は1〜19で指定してください')
+    if not isinstance(height, int) or not 0 <= height <= 12:
+        raise ValueError('高さは0〜12で指定してください')
+    score = sum(40 * max(1, CHAIN_BONUS[n]) for n in range(1, chain + 1))
+    return {'chain': chain, 'height': height,
+            **_metrics(score, 4 * chain, 6 * height, 80 * chain)}
