@@ -12,7 +12,7 @@ FILES = [
     "README.md", "TERMS.md", "THIRD_PARTY_NOTICES.md",
     "SETUP_FIRST.bat", "START_Analysis.bat",
     "requirements-windows.txt",
-    "puyo_tools/app.py", "puyo_tools/record_store.py", "puyo_tools/crop_suggest.py",
+    "puyo_tools/app.py", "puyo_tools/record_store.py", "puyo_tools/crop_suggest.py", "puyo_tools/tenpai_probe.py",
     "puyo_tools/common/__init__.py", "puyo_tools/common/analysis.py",
     "puyo_tools/common/engine.py", "puyo_tools/common/image_board.py",
     "puyo_tools/common/reference.py", "puyo_tools/common/time_calc.py",
