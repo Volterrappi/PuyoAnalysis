@@ -36,7 +36,8 @@ def draw_board(parent, board, cell=20, highlight=()):
             if ch!='.':canvas.create_oval(x+2,y+2,x+cell-2,y+cell-2,fill=PALETTE[ch],outline='#ffffff')
     for r,c in highlight:
         x=c*cell;y=r*cell
-        canvas.create_rectangle(x+1,y+1,x+cell-1,y+cell-1,outline='#fff046',width=3)
+        canvas.create_rectangle(x+1,y+1,x+cell-1,y+cell-1,outline='#111111',width=4)
+        canvas.create_rectangle(x+3,y+3,x+cell-3,y+cell-3,outline='#ffffff',width=2)
     canvas.create_line(0,cell,W*cell,cell,fill='#ff9b72',width=2)
     canvas.pack()
     return canvas
@@ -278,7 +279,6 @@ class App(tk.Tk):
         ttk.Button(left,text='テキストで入力 / 貼り付け',command=self.text_import).pack(fill='x',pady=3)
         ttk.Button(left,text='画像から盤面を読み取る',command=self.image_import).pack(fill='x',pady=3)
         ttk.Button(left,text='クリップボードの画像を読み取る',command=self.image_import_clipboard).pack(fill='x',pady=3)
-        ttk.Button(left,text='盤面＋ネクストをテキスト保存',command=self.save_board).pack(fill='x',pady=3)
         self.review_save_btn=ttk.Button(left,text='振り返り記録に保存',command=self.save_review, state='disabled')
         self.review_save_btn.pack(fill='x',pady=(12,3))
         ttk.Button(left,text='現在の盤面・解析を記録',command=self.save_standalone).pack(fill='x',pady=3)
