@@ -1,0 +1,32 @@
+{
+  "version": "1.0.1",
+  "based_on": "preview8",
+  "sha256": "3467302f041f6737dc679ef393fc6936fe5cb0d4d2b731ff4c062bb73bcb9b33",
+  "bytes": 54250,
+  "automated_tests": 20,
+  "files": {
+    "PuyoAnalysis-Source-Windows-v1.0.1/README.md": "23a4b542b32dc5867c40c0c6379738bbca9073f4e94395edf62d40945bdf2aab",
+    "PuyoAnalysis-Source-Windows-v1.0.1/TERMS.md": "220510e31c1bf8dcdac865a9fdb97c4452a2a4b4c120a8eb8be58a5bc7c59c93",
+    "PuyoAnalysis-Source-Windows-v1.0.1/THIRD_PARTY_NOTICES.md": "32a257dee8bbb05e3652d5a4b0de73ab922788114827f9bcc81db26f96e981dc",
+    "PuyoAnalysis-Source-Windows-v1.0.1/CHANGELOG_NEXT.md": "513f7cef9fc44218cfb4069be616c3d23718b6f2168ab0dcd94b22d54cbbf6b4",
+    "PuyoAnalysis-Source-Windows-v1.0.1/SETUP_FIRST.bat": "c88af37554a4777eb2239ee692ef030d35e50cb6262e50c95d340fc0b14d1273",
+    "PuyoAnalysis-Source-Windows-v1.0.1/START_Analysis.bat": "3c168ce1dcfece0a225681c3f6919145ee387ab16933a977ea9f20faebdf8b44",
+    "PuyoAnalysis-Source-Windows-v1.0.1/requirements-windows.txt": "eebba95e6ce76a21072518da7f49eb8a0c8ec455498c9a7b70be6c80cafa54d8",
+    "PuyoAnalysis-Source-Windows-v1.0.1/puyo_tools/app.py": "35c39ab98563daae181841eef62a13ef02c8c676dcc0ebf349674f7efab9fff0",
+    "PuyoAnalysis-Source-Windows-v1.0.1/puyo_tools/record_store.py": "f2cbb46e01e693660e5703cc559b24d3482d0f32268d2292225fc56366241f83",
+    "PuyoAnalysis-Source-Windows-v1.0.1/puyo_tools/crop_suggest.py": "7b6674442cca5ce0776370cf066430ea9cc516286ec0ff8ac966da0feea5b799",
+    "PuyoAnalysis-Source-Windows-v1.0.1/puyo_tools/tenpai_probe.py": "7e23fc79ae9740ea2f40cc927b91b8b28d8a639aa1667544ce6fe228699a9cd3",
+    "PuyoAnalysis-Source-Windows-v1.0.1/puyo_tools/common/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "PuyoAnalysis-Source-Windows-v1.0.1/puyo_tools/common/analysis.py": "acb2c29a4077fe09e4fb232eee79e82ddace265c2b7bd656a87a739d0b66e038",
+    "PuyoAnalysis-Source-Windows-v1.0.1/puyo_tools/common/engine.py": "e7001d5025db584083f2a7ff932d21a508b179eb7a70211534f9de1e77b48026",
+    "PuyoAnalysis-Source-Windows-v1.0.1/puyo_tools/common/image_board.py": "4bf2bbeb8416518fdf2191e362520b1d6a790fdf6c915e6658aed00704fdbd21",
+    "PuyoAnalysis-Source-Windows-v1.0.1/puyo_tools/common/reference.py": "d094d6f4c4e2c6ac3e9901c6c91cc0669aa5cbcfe54894451e2e585488d9ad4c",
+    "PuyoAnalysis-Source-Windows-v1.0.1/puyo_tools/common/time_calc.py": "13ab2ad4499c36484b2495b030bf98a30476b9d13cceefa10a8d8998e38b4a52",
+    "PuyoAnalysis-Source-Windows-v1.0.1/puyo_tools/assets/small.png": "7dd273e26c77bcc56e284e0085e36941ef3e1c2b142737031cafefa6813d46b2",
+    "PuyoAnalysis-Source-Windows-v1.0.1/puyo_tools/assets/large.png": "e11ffe55bf38c85086406e83f6c1f9072b528cfbee9aebb2fde8aaaa91d6c625",
+    "PuyoAnalysis-Source-Windows-v1.0.1/puyo_tools/assets/red.png": "1844c9e863130e42bcbbf8935e3f65f4788aa26205af558abe087264ae32d8cf",
+    "PuyoAnalysis-Source-Windows-v1.0.1/puyo_tools/assets/star.png": "fe918a0244f0447ab548760e3b9a57536abf3e7e84601ebc1975c839c4ee4f9d",
+    "PuyoAnalysis-Source-Windows-v1.0.1/puyo_tools/assets/moon.png": "f8b9a0bb6a9b19578549ceaacf8be236ba60ccc5e84483ca21dee2aa257a470f",
+    "PuyoAnalysis-Source-Windows-v1.0.1/puyo_tools/assets/crown.png": "a41ba688cf1c3dccd38dd96f221883f877245c20f80c55f442fe14a93ea1b972"
+  }
+}
