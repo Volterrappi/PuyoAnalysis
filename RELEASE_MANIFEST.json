@@ -1,15 +1,15 @@
 {
   "version": "1.0.1",
   "based_on": "preview8",
-  "sha256": "3467302f041f6737dc679ef393fc6936fe5cb0d4d2b731ff4c062bb73bcb9b33",
-  "bytes": 54250,
+  "sha256": "d54251ddef9d02435f51580fd3be65e2b2f3eba4ff7a9cfbbaabaf90ec5e2816",
+  "bytes": 54312,
   "automated_tests": 20,
   "files": {
-    "PuyoAnalysis-Source-Windows-v1.0.1/README.md": "23a4b542b32dc5867c40c0c6379738bbca9073f4e94395edf62d40945bdf2aab",
+    "PuyoAnalysis-Source-Windows-v1.0.1/README.md": "220a6516e558eec748267b5f70173b9440268036e81b5502c66571c289f4347e",
     "PuyoAnalysis-Source-Windows-v1.0.1/TERMS.md": "220510e31c1bf8dcdac865a9fdb97c4452a2a4b4c120a8eb8be58a5bc7c59c93",
     "PuyoAnalysis-Source-Windows-v1.0.1/THIRD_PARTY_NOTICES.md": "32a257dee8bbb05e3652d5a4b0de73ab922788114827f9bcc81db26f96e981dc",
     "PuyoAnalysis-Source-Windows-v1.0.1/CHANGELOG_NEXT.md": "513f7cef9fc44218cfb4069be616c3d23718b6f2168ab0dcd94b22d54cbbf6b4",
-    "PuyoAnalysis-Source-Windows-v1.0.1/SETUP_FIRST.bat": "c88af37554a4777eb2239ee692ef030d35e50cb6262e50c95d340fc0b14d1273",
+    "PuyoAnalysis-Source-Windows-v1.0.1/SETUP_FIRST.bat": "087f34469808ffa0303e8c6f1daeac3b99f92a464d245f3ad52b205eee23227e",
     "PuyoAnalysis-Source-Windows-v1.0.1/START_Analysis.bat": "3c168ce1dcfece0a225681c3f6919145ee387ab16933a977ea9f20faebdf8b44",
     "PuyoAnalysis-Source-Windows-v1.0.1/requirements-windows.txt": "eebba95e6ce76a21072518da7f49eb8a0c8ec455498c9a7b70be6c80cafa54d8",
     "PuyoAnalysis-Source-Windows-v1.0.1/puyo_tools/app.py": "35c39ab98563daae181841eef62a13ef02c8c676dcc0ebf349674f7efab9fff0",
@@ -28,5 +28,6 @@
     "PuyoAnalysis-Source-Windows-v1.0.1/puyo_tools/assets/star.png": "fe918a0244f0447ab548760e3b9a57536abf3e7e84601ebc1975c839c4ee4f9d",
     "PuyoAnalysis-Source-Windows-v1.0.1/puyo_tools/assets/moon.png": "f8b9a0bb6a9b19578549ceaacf8be236ba60ccc5e84483ca21dee2aa257a470f",
     "PuyoAnalysis-Source-Windows-v1.0.1/puyo_tools/assets/crown.png": "a41ba688cf1c3dccd38dd96f221883f877245c20f80c55f442fe14a93ea1b972"
-  }
+  },
+  "manual_environment": "Windows / Python 3.13 (author-reported)"
 }

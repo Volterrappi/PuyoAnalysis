@@ -8,6 +8,8 @@ Assets の **PuyoAnalysis-Source-Windows-v1.0.1.zip** をダウンロードし�
 2. SETUP_FIRST.bat を実行し、Libraries OK / Setup complete を確認。
 3. START_Analysis.bat を実行。
 
+Python 3.13は作者のWindows実機で動作確認済みです。Python 3.12では自動テスト20件・初回セットアップ・GUI起動を確認しています。3.12より新しいPythonでは警告を表示しますが、セットアップを続行できます。すべての新しいバージョンでの動作を保証するものではありません。
+
 これはPythonソース版です。EXE版・Python実行環境は同梱していません。初回セットアップにはネット接続が必要です。
 
 ## 主な機能

@@ -1,6 +1,6 @@
 # PuyoAnalysis v1.0.1 — Windows解析単体版
 
-ぷよぷよeスポーツの盤面を手入力・画像・クリップボードから入力し、連鎖STATSとNEXT3組の3手全探索を行う非公式ツールです。preview8の機能を確定した、初回公開に向けたリリース候補です。
+ぷよぷよeスポーツの盤面を手入力・画像・クリップボードから入力し、連鎖STATSとNEXT3組の3手全探索を行う非公式ツールです。盤面の入力・解析・結果の記録保存に対応しています。
 
 ## 起動
 1. 64bit Windows 10/11とPython 3.12以上（Python Launcherを含む）を準備します。
@@ -8,7 +8,9 @@
 3. `SETUP_FIRST.bat` で Libraries OK / Setup complete を確認します。
 4. `START_Analysis.bat` を起動します。
 
-初回セットアップにはネット接続が必要です。変更内容・今回確認したい操作は [CHANGELOG_NEXT.md](CHANGELOG_NEXT.md) を参照してください。
+Python 3.13は作者のWindows実機で動作確認済みです。Python 3.12ではWindowsの自動テストと初回セットアップ・起動を確認しています。3.12より新しいPythonでは警告を表示しますが、セットアップを続行できます。すべての新しいバージョンでの動作を保証するものではありません。
+
+初回セットアップにはネット接続が必要です。変更内容は [CHANGELOG_NEXT.md](CHANGELOG_NEXT.md) を参照してください。
 
 ## 記録とCSV
 - 「現在の盤面・解析を記録」で名前・メモ・フォルダを指定します。
@@ -27,7 +29,7 @@
 - テンパイ探索は単一列への追加による試作です。
 - 3手探索の操作可能性は近似で、14段目の子ぷよ保持には対応していません。
 - 配布ZIPは解析単体版です。動画・YouTubeの入口は含めません。
-- Windows上のローカル自動テスト20件とZIP展開後の起動を確認済みです。公開候補のGitHub ActionsとRelease添付ファイルの照合は公開準備中です。
+- Python 3.12のWindows環境で自動テスト20件、配布ZIP展開後の初回セットアップとGUI起動を確認済みです。Python 3.13では作者が実機で動作確認しています。
 - 独自コード・画像の利用条件は `TERMS.md`、第三者コンポーネントは `THIRD_PARTY_NOTICES.md` を参照してください。
 
 不具合・要望：[Issues](https://github.com/Volterrappi/PuyoReview-Release/issues)
