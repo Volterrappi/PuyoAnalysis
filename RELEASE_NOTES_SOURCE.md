@@ -1,31 +1,13 @@
-# PuyoAnalysis v1.0.1 — Windows解析単体・ソース版
+# PuyoAnalysis v1.0.1
 
-ぷよぷよeスポーツの盤面を手入力・画像・クリップボードから読み込み、連鎖STATSとNEXT 3組の3手全探索を行う非公式ツールです。
+ぷよぷよeスポーツの盤面解析ツールです。
+連鎖STATS、NEXT3組の3手全探索、盤面・解析結果の記録保存に対応しています。
 
-## ダウンロードと起動
-Assets の **PuyoAnalysis-Source-Windows-v1.0.1.zip** をダウンロードし、別フォルダへ「すべて展開」してください。
-1. 64bit Windows 10/11とPython 3.12以上（Python Launcherを含む）を準備。
-2. SETUP_FIRST.bat を実行し、Libraries OK / Setup complete を確認。
-3. START_Analysis.bat を実行。
+下のAssetsから **PuyoAnalysis-Source-Windows-v1.0.1.zip** をダウンロードして展開してください。
 
-Python 3.13は作者のWindows実機で動作確認済みです。Python 3.12では自動テスト20件・初回セットアップ・GUI起動を確認しています。3.12より新しいPythonでは警告を表示しますが、セットアップを続行できます。すべての新しいバージョンでの動作を保証するものではありません。
+初回は `SETUP_FIRST.bat`、以降は `START_Analysis.bat` で起動します。
+64bit Windows 10/11とPython 3.12以上が必要です。
 
-これはPythonソース版です。EXE版・Python実行環境は同梱していません。初回セットアップにはネット接続が必要です。
+詳しい起動手順・使い方は[README](https://github.com/Volterrappi/PuyoReview-Release#readme)をご覧ください。
 
-## 主な機能
-- 手入力・画像・クリップボードからの盤面入力
-- 連鎖数・火力・時間・効率の表示、連鎖アニメーション、NEXT 3組の全探索
-- 盤面・NEXT・メモ・解析結果・全候補CSV・取り込み画像の記録保存
-- 記録の検索・列ソート・アプリ内フォルダ移動、画像・CSV・保存フォルダを開く操作
-- 火力・効率の基準表、同じ火力・効率のグループ表示と内訳確認
-- 入力→解析→保存の案内と折りたたみ式の詳細設定
-
-## ご確認ください
-- 動画・YouTube連携は含みません。テンパイ探索は単一列への追加を調べる試作です。
-- 探索の操作到達判定は近似で、14段目の子ぷよ保持には対応していません。
-- 画像の盤面範囲は仮選択です。読み取り前に格子位置を確認してください。
-- 記録はユーザーフォルダ内の PuyoReview/records に保存します。フォルダ移動はアプリ内で行ってください。
-- 入力変更後の保存では、変更した盤面・NEXTと変更前の解析結果・CSVを組み合わせて残せます。解析元の入力もJSONに保持します。
-- ソースの閲覧・ダウンロード・個人目的の実行を許可する独自の利用条件です。詳細は TERMS.md を参照してください。
-
-不具合・要望：[Issues](https://github.com/Volterrappi/PuyoReview-Release/issues) / [X @istnpypy](https://x.com/istnpypy)
+[MITライセンス](https://github.com/Volterrappi/PuyoReview-Release/blob/main/LICENSE)で公開しています。

@@ -1,14 +1,14 @@
 {
   "version": "1.0.1",
   "based_on": "preview8",
-  "sha256": "d54251ddef9d02435f51580fd3be65e2b2f3eba4ff7a9cfbbaabaf90ec5e2816",
-  "bytes": 54312,
+  "sha256": "76712a7260cc1192d972fc1c43aaa4ab9064d3c19c339b7c5fc889a2780e0aa1",
+  "bytes": 52641,
   "automated_tests": 20,
   "files": {
-    "PuyoAnalysis-Source-Windows-v1.0.1/README.md": "220a6516e558eec748267b5f70173b9440268036e81b5502c66571c289f4347e",
-    "PuyoAnalysis-Source-Windows-v1.0.1/TERMS.md": "220510e31c1bf8dcdac865a9fdb97c4452a2a4b4c120a8eb8be58a5bc7c59c93",
-    "PuyoAnalysis-Source-Windows-v1.0.1/THIRD_PARTY_NOTICES.md": "32a257dee8bbb05e3652d5a4b0de73ab922788114827f9bcc81db26f96e981dc",
-    "PuyoAnalysis-Source-Windows-v1.0.1/CHANGELOG_NEXT.md": "513f7cef9fc44218cfb4069be616c3d23718b6f2168ab0dcd94b22d54cbbf6b4",
+    "PuyoAnalysis-Source-Windows-v1.0.1/README.md": "acb5924216a689a71768e8ee1cea09363d659a7a16183956a34503f7a61722d2",
+    "PuyoAnalysis-Source-Windows-v1.0.1/GUIDE.md": "fe5727bba07abc15671f55b9fbdd7b3c002addddc816121a8ac5f309d1ce0b9d",
+    "PuyoAnalysis-Source-Windows-v1.0.1/LICENSE": "90fb7b8389dc158bdd4c51dc51ef252c28bcd404b58637809a3afd677290813c",
+    "PuyoAnalysis-Source-Windows-v1.0.1/THIRD_PARTY_NOTICES.md": "c8d9ae966bda1a0bb9ad45d65d15626c8cb6ae812d304c6b2f0db6fe8f720ca8",
     "PuyoAnalysis-Source-Windows-v1.0.1/SETUP_FIRST.bat": "087f34469808ffa0303e8c6f1daeac3b99f92a464d245f3ad52b205eee23227e",
     "PuyoAnalysis-Source-Windows-v1.0.1/START_Analysis.bat": "3c168ce1dcfece0a225681c3f6919145ee387ab16933a977ea9f20faebdf8b44",
     "PuyoAnalysis-Source-Windows-v1.0.1/requirements-windows.txt": "eebba95e6ce76a21072518da7f49eb8a0c8ec455498c9a7b70be6c80cafa54d8",
@@ -29,5 +29,6 @@
     "PuyoAnalysis-Source-Windows-v1.0.1/puyo_tools/assets/moon.png": "f8b9a0bb6a9b19578549ceaacf8be236ba60ccc5e84483ca21dee2aa257a470f",
     "PuyoAnalysis-Source-Windows-v1.0.1/puyo_tools/assets/crown.png": "a41ba688cf1c3dccd38dd96f221883f877245c20f80c55f442fe14a93ea1b972"
   },
-  "manual_environment": "Windows / Python 3.13 (author-reported)"
+  "manual_environment": "Windows / Python 3.13 (author-reported)",
+  "license": "MIT"
 }
