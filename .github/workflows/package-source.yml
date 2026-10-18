@@ -1,4 +1,4 @@
-name: Package source ZIP (YouTube OFF)
+name: Package PuyoAnalysis source ZIP
 
 on:
   pull_request:
@@ -13,12 +13,17 @@ on:
       - 'START_*.bat'
       - 'requirements-windows.txt'
       - 'README.md'
-      - 'TERMS.md'
+      - 'GUIDE.md'
+      - 'LICENSE'
       - 'THIRD_PARTY_NOTICES.md'
   workflow_dispatch:
 
 permissions:
   contents: read
+
+concurrency:
+  group: source-package-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   package:
@@ -46,8 +51,8 @@ jobs:
         env:
           PY_PYTHON3: '3.12'
         run: |
-          Expand-Archive -LiteralPath dist/PuyoAnalysis-Source-Windows-v1.0.1.zip -DestinationPath setup-smoke
-          $packageRoot = (Resolve-Path setup-smoke/PuyoAnalysis-Source-Windows-v1.0.1).Path
+          Expand-Archive -LiteralPath dist/PuyoAnalysis-Source-Windows-v1.0.2.zip -DestinationPath setup-smoke
+          $packageRoot = (Resolve-Path setup-smoke/PuyoAnalysis-Source-Windows-v1.0.2).Path
           Push-Location $packageRoot
           cmd /c "echo.|SETUP_FIRST.bat"
           $setupExit = $LASTEXITCODE
@@ -59,7 +64,7 @@ jobs:
       - name: Upload ZIP for draft release
         uses: actions/upload-artifact@v4
         with:
-          name: PuyoAnalysis-Source-Windows-v1.0.1
-          path: dist/PuyoAnalysis-Source-Windows-v1.0.1.zip
+          name: PuyoAnalysis-Source-Windows-v1.0.2
+          path: dist/PuyoAnalysis-Source-Windows-v1.0.2.zip
           if-no-files-found: error
-          retention-days: 30
+          retention-days: 7
