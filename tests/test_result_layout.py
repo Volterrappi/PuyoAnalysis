@@ -76,6 +76,7 @@ class ResultLayoutTests(unittest.TestCase):
         from tenpai_search import search
         from tenpai_view import ResponseList
         app=self.app;board=EMPTY[:-1]+('RR....',)
+        self.assertEqual(app.input_shanten.get(),'0')
         app.input_tenpai_queue.put(('ok',search(board,1)))
         app.poll_input_tenpai();app.tabs.select(app.tab_tenpai);app.update()
         self.assertTrue(app.input_tenpai_result['complete'])

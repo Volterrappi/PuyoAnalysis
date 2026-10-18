@@ -92,11 +92,11 @@ class ResponseGuiTests(unittest.TestCase):
         self.app.response_limit.set('3');self.app.change_response_mode()
         self.assertEqual(self.app.visible,[0])
 
-    def test_response_controls_are_inside_collapsible_details(self):
+    def test_response_controls_are_not_shown_in_details(self):
         def children(parent):
             for w in parent.winfo_children():yield w;yield from children(w)
         controls=[w for w in children(self.app.details_frame) if w.winfo_class()=='TCheckbutton']
-        self.assertTrue(any(w.cget('text')=='対応想定で絞る・代表を選ぶ' for w in controls))
+        self.assertFalse(any(w.cget('text')=='対応想定で絞る・代表を選ぶ' for w in controls))
         self.assertFalse(self.app.details_frame.winfo_manager())
         self.app.toggle_details()
         self.assertEqual(self.app.details_frame.winfo_manager(),'pack')
