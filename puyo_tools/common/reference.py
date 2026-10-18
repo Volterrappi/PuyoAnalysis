@@ -86,8 +86,25 @@ def multi_rows(height, quick, maximum=12, group_counts=(2,3,4)):
     return sorted(rows,key=lambda r:(r['efficiency'],r['score'],r['group_count'],r['sizes']))
 
 
-# Ten-million-point time-attack pace, expressed in points per second.
-TA_PACES = {minutes: 10_000_000 / (minutes * 60) for minutes in (120, 100, 80)}
+# One-million-point time-attack pace, expressed in points per second.
+TA_PACES = {minutes: 1_000_000 / (minutes * 60) for minutes in (12, 10, 8, 6)}
+
+
+def group_equal_metrics(rows):
+    """Group exact score/efficiency matches without rounding away differences."""
+    grouped = {}
+    for row in rows:
+        key = (row['score'], row['efficiency'])
+        if key not in grouped:
+            grouped[key] = dict(row, variants=[])
+        grouped[key]['variants'].append((row['kind'], row['groups']))
+    result = []
+    for row in grouped.values():
+        variants = row['variants']
+        row['kind'] = ' / '.join(dict.fromkeys(kind for kind, _ in variants))
+        row['groups'] = variants[0][1] + (f' ほか{len(variants)-1}通り' if len(variants)>1 else '')
+        result.append(row)
+    return sorted(result, key=lambda row: (row['efficiency'], row['score']))
 
 
 def four_clear_at_height(chain, height):

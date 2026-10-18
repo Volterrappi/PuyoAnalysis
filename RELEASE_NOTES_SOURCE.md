@@ -1,32 +1,20 @@
-# PuyoReview v1.0.0 — ソース公開版
+# PuyoAnalysis v1.0.2 — Windows解析ツール
 
-ぷよぷよeスポーツの対戦動画を振り返り、盤面解析・連鎖STATS・NEXT3組の3手全探索を行うWindows向けの非公式Pythonツールです。
+ぷよぷよeスポーツの盤面を手入力・画像・クリップボードから入力し、連鎖STATS・NEXT3組の3手全探索・テンパイ探索を行う非公式ツールです。盤面や解析結果の記録保存に対応しています。
 
-## ダウンロード
-下の **Assets** から `PuyoReview-Source-Windows-v1.0.0.zip` をダウンロードして、「すべて展開」してください。
+## 起動
 
-## はじめかた
-1. Python公式サイトから**64bit版 Python 3.12以上**をインストール（Python Launcherを含める）。
-2. 展開フォルダの **`SETUP_FIRST.bat`** をダブルクリック。必要なライブラリをまとめて自動インストールします。
-3. `Libraries OK`、`Setup complete` と出たら成功。
-4. **`START_Review.bat`**（動画振り返り＋解析）または **`START_Analysis.bat`**（解析単体）をダブルクリックして起動。
+1. 64bit Windows 10/11とPython 3.12以上（Python Launcherを含む）を準備します。
+2. 下のAssetsから `PuyoAnalysis-Source-Windows-v1.0.2.zip` をダウンロードし、展開します。
+3. `SETUP_FIRST.bat` を起動します（初回のみ）。
+4. `START_Analysis.bat` を起動します。
 
-Python 3.11以前は非対応。Python 3.13以上では注意メッセージを表示した後、そのままセットアップを続行します。開発者環境のPython 3.13.14ではセットアップ・起動確認済みです。
+動作確認はPython 3.13、自動テストはPython 3.12を使用しています。動作を保証するものではありません。
 
-詳しい手順、エラー対処は [README](https://github.com/Volterrappi/PuyoReview-Release#readme) を参照してください。
+初回セットアップにはネット接続が必要です。
 
-## 主な機能
-- MP4動画の振り返り、盤面キャプチャ、記録保存
-- 手入力、画像、クリップボードから盤面を認識
-- 連鎖数・得点・所要フレーム・効率の表示
-- 連鎖アニメーション、NEXT3組の3手全探索
-- 盤面とNEXTの保存・復元
+操作の詳細は[利用ガイド](https://github.com/Volterrappi/PuyoReview-Release/blob/main/GUIDE.md)をご覧ください。
 
-## 注意事項
-- Windows 10/11（64bit）向けで、初回セットアップにはインターネット接続が必要です。
-- YouTube連携は初回公開版では無効です。MP4をご利用ください。
-- MP4は現状音声なし。全探索には、操作可能性の制約で実際には置けない候補が含まれる場合があります。
-- この配布物はPythonソースを含みます。EXE・第三者ライブラリのバイナリは同梱していません。
-- 非公式のファン制作ツールです。独自コード・画像の利用条件はZIP内の `TERMS.md` を参照してください。
+不具合・要望：[Issues](https://github.com/Volterrappi/PuyoReview-Release/issues) / [X @istnpypy](https://x.com/istnpypy)
 
-不具合や要望は [X @istnpypy](https://x.com/istnpypy) までお願いします。
+独自制作のコード・画像は[MITライセンス](https://github.com/Volterrappi/PuyoReview-Release/blob/main/LICENSE)です。ゲームの名称・商標等の権利は各権利者に帰属します。

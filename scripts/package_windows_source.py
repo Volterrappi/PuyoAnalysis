@@ -1,4 +1,4 @@
-"""Build a source-only Windows ZIP for the YouTube-disabled initial release."""
+"""Build the source-only Windows distribution from an explicit allowlist."""
 from pathlib import Path
 from zipfile import ZipFile, ZIP_DEFLATED
 import ast
@@ -6,20 +6,21 @@ import hashlib
 import re
 
 ROOT = Path(__file__).resolve().parents[1]
-ARCHIVE_NAME = "PuyoReview-Source-Windows-v1.0.0.zip"
+ARCHIVE_NAME = "PuyoAnalysis-Source-Windows-v1.0.2.zip"
 OUT = ROOT / "dist" / ARCHIVE_NAME
 FILES = [
-    "README.md", "TERMS.md", "THIRD_PARTY_NOTICES.md",
+    "README.md", "GUIDE.md", "LICENSE", "THIRD_PARTY_NOTICES.md",
     "SETUP_FIRST.bat", "START_Analysis.bat",
     "requirements-windows.txt",
-    "puyo_tools/app.py", "puyo_tools/record_store.py", "puyo_tools/crop_suggest.py", "puyo_tools/tenpai_probe.py",
-    "puyo_tools/common/__init__.py", "puyo_tools/common/analysis.py",
+    "puyo_tools/app.py", "puyo_tools/placement_lab.py", "puyo_tools/common/placement_proto.py", "puyo_tools/record_store.py", "puyo_tools/crop_suggest.py", "puyo_tools/tenpai_probe.py",
+    "puyo_tools/common/__init__.py", "puyo_tools/common/analysis.py", "puyo_tools/common/ghost_fall.py", "puyo_tools/common/placement_time.py", "puyo_tools/common/result_columns.py",
     "puyo_tools/common/engine.py", "puyo_tools/common/image_board.py",
     "puyo_tools/common/reference.py", "puyo_tools/common/time_calc.py",
     "puyo_tools/assets/small.png", "puyo_tools/assets/large.png",
     "puyo_tools/assets/red.png", "puyo_tools/assets/star.png",
     "puyo_tools/assets/moon.png", "puyo_tools/assets/crown.png",
 ]
+FILES += ['puyo_tools/tenpai_evaluation.py','puyo_tools/tenpai_search.py','puyo_tools/tenpai_view.py']
 BANNED = ("youtube_player.py", "youtube_capture.py", "youtube_dock.py", "webview_host.py")
 SENSITIVE = (
     r"-----BEGIN (?:RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----",
@@ -44,7 +45,7 @@ def main():
         raise RuntimeError("Analysis-only ZIP includes review/YouTube entry point")
     with ZipFile(OUT, "w", ZIP_DEFLATED) as z:
         for name in FILES:
-            z.write(ROOT / name, f"PuyoReview-Source-Windows-v1.0.0/{name}")
+            z.write(ROOT / name, f"PuyoAnalysis-Source-Windows-v1.0.2/{name}")
     with ZipFile(OUT) as z:
         assert z.testzip() is None
         names = z.namelist()

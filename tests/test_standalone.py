@@ -40,9 +40,9 @@ class RecordsTests(unittest.TestCase):
         self.assertEqual(tenpai_probe.probe(tuple(EMPTY)),[])
 
     def test_reference_efficiency_benchmarks(self):
-        self.assertAlmostEqual(TA_PACES[120], 10_000_000/(120*60))
-        self.assertAlmostEqual(TA_PACES[100], 10_000_000/(100*60))
-        self.assertAlmostEqual(TA_PACES[80], 10_000_000/(80*60))
+        self.assertEqual(list(TA_PACES),( [12,10,8,6]))
+        for minutes in (12,10,8,6):
+            self.assertAlmostEqual(TA_PACES[minutes],1_000_000/(minutes*60))
         for height in (0, 5, 12):
             for chain in (3, 4, 5):
                 baseline = four_clear_at_height(chain, height)

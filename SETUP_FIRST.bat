@@ -1,7 +1,7 @@
 @echo off
 setlocal
 cd /d "%~dp0"
-echo ===== PuyoReview: First-time setup =====
+echo ===== PuyoAnalysis: First-time setup =====
 echo.
 where py >nul 2>&1
 if errorlevel 1 goto no_python
@@ -29,10 +29,10 @@ echo [2/3] Installing libraries (Internet required)...
 ".venv\Scripts\python.exe" -m pip install -r requirements-windows.txt
 if errorlevel 1 goto failed
 echo [3/3] Checking libraries...
-".venv\Scripts\python.exe" -c "import PIL, cv2, webview, clr; print('Libraries OK')"
+".venv\Scripts\python.exe" -c "import PIL, tkinter; print('Libraries OK')"
 if errorlevel 1 goto failed
 echo.
-echo Setup complete. Now open START_Review.bat or START_Analysis.bat.
+echo Setup complete. Now open START_Analysis.bat.
 pause
 exit /b 0
 :no_python

@@ -92,9 +92,29 @@ def group_by_score(candidates, stats, include_pending=False):
             for score, indices in sorted(groups.items(), reverse=True)]
 
 
-def detail_row(candidate, stat, include_pending=False, efficiency_mode='used', include_future_eff=None):
+def response_priority(candidate, stat, max_chain, efficiency_mode='used'):
+    """Rank eligible response paths; None excludes no-fire/over-limit paths.
+
+    Minimize firing turns, maximize the best firing turn's existing efficiency,
+    minimize chigiri, maximize all-clears. Caller breaks exact ties by path index.
+    """
+    if max_chain < 1:
+        raise ValueError('連鎖数の上限は1以上で指定してください')
+    firing = [turn for turn in candidate.turns if turn.chain.count > 0]
+    if not firing or any(turn.chain.count > max_chain for turn in firing):
+        return None
+    best_efficiency = max((turn_efficiency(turn, efficiency_mode) or 0) for turn in firing)
+    return (len(firing), -best_efficiency, stat.chigiri_total, -stat.clear_count)
+
+
+def detail_row(candidate, stat, include_pending=False, efficiency_mode='used', include_future_eff=None, row14='......', initial_board=None, row14_enabled=True, mawashi_frames=20):
     if include_future_eff is not None:
         efficiency_mode = 'earned' if include_future_eff else ('used' if efficiency_mode else 'none')
+    from .ghost_fall import ghost_frames, advance_row14
+    from .placement_time import placement_time
+    hidden=row14
+    placement_totals=[]
+    previous=initial_board
     eff = tuple(turn_efficiency(t, efficiency_mode) for t in candidate.turns)
     row = {
         '合計得点': stat.total + (2100 if include_pending and stat.pending_bonus else 0),
@@ -111,9 +131,26 @@ def detail_row(candidate, stat, include_pending=False, efficiency_mode='used', i
         '全消し回数': stat.clear_count,
         '全消しボーナス使用回数': stat.bonus_count,
         '最終全消し': stat.final_clear,
+        '14段目使用': bool(row14_enabled),
     }
     for j, turn in enumerate(candidate.turns):
         n = j + 1
+        placement=placement_time(previous,hidden,turn.move,mawashi_frames) if row14_enabled and previous is not None else None
+        duration=placement.frames if placement is not None and placement.reachable else None
+        placement_totals.append(duration)
+        row[f'{n}手目設置判定']=('到達可能' if placement.reachable else '設置不可（試作）') if placement is not None else None
+        row[f'{n}手目設置時間(F)']=duration
+        row[f'{n}手目設置時間(秒)']=duration/60 if duration is not None else None
+        row[f'{n}手目移動時間(F)']=placement.move_frames if duration is not None else None
+        row[f'{n}手目回し']=placement.needs_mawashi if placement is not None and placement.reachable else None
+        row[f'{n}手目回し時間(F)']=placement.mawashi_frames if duration is not None else None
+        row[f'{n}手目ちぎり段数']=placement.chigiri_cells if placement is not None and placement.reachable else None
+        row[f'{n}手目ちぎり時間(F)']=placement.chigiri_frames if duration is not None else None
+        if row14_enabled and previous is not None:hidden=advance_row14(hidden,previous,turn.move)
+        delta=ghost_frames(turn.chain,hidden) if row14_enabled else None
+        row[f'{n}手目仮想落下分(F)']=delta
+        row[f'{n}手目仮想落下分(秒)']=delta/60 if delta is not None else None
+        previous=turn.chain.final
         row[f'{n}手目配置'] = str(turn.move)
         row[f'{n}手目得点'] = turn.points
         row[f'{n}手目連鎖数'] = turn.chain.count
@@ -134,6 +171,11 @@ def detail_row(candidate, stat, include_pending=False, efficiency_mode='used', i
         row[f'{n}手目全消し'] = bool(stat.clear[j])
         row[f'{n}手目全消しボーナス使用'] = bool(stat.bonus_awards[j])
         row[f'{n}手目ちぎり'] = bool(stat.chigiri[j])
+    total=sum(placement_totals) if all(v is not None for v in placement_totals) else None
+    row['設置不可の手を含む']=any(row[f'{n}手目設置判定']=='設置不可（試作）' for n in range(1,4)) if row14_enabled and initial_board is not None else None
+    row['合計設置時間(F)']=total
+    row['合計設置時間(秒)']=total/60 if total is not None else None
+    row['回し追加設定(F)']=mawashi_frames if row14_enabled else None
     row['1手の最高連鎖効率'] = max((x for x in eff if x is not None), default=None)
     # Legacy CSV field; new UI uses 補充時間.
     for n in range(1,4):
