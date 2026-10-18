@@ -17,7 +17,7 @@ Python 3.13で実機動作確認、Python 3.12で自動テスト済みです。�
 
 保存した記録から、画像・探索結果のCSV・保存フォルダを開けます。
 
-詳しい操作や注意点は[利用ガイド](GUIDE.md)をご覧ください。
+詳しい操作や注意点は[利用ガイド](利用ガイド.md)をご覧ください。
 
 ## 不具合・要望
 [Issues](https://github.com/Volterrappi/PuyoAnalysis/issues) または [X @istnpypy](https://x.com/istnpypy)へ。
