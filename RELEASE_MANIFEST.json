@@ -1,8 +1,8 @@
 {
   "version": "v1.0.2",
   "archive": "PuyoAnalysis-Source-Windows-v1.0.2.zip",
-  "bytes": 78966,
-  "sha256": "b7471c1205faaeefe7d1f1a952df70b47f4b451f4da0dd6956e5ac4d7d25dd71",
+  "bytes": 78800,
+  "sha256": "f2a15619960268cc606b7b3e0eb7e833e217452432c3264646b0f604e4edad4c",
   "files": {
     "PuyoAnalysis-Source-Windows-v1.0.2/README.md": "f48145b4e0c386f972ed5337b1dc13ed64f526948f737f5574004c6acc876a01",
     "PuyoAnalysis-Source-Windows-v1.0.2/GUIDE.md": "a12afc24de5fce681655475b6f3e826e265b7764bbde6f4f0f3e614dc8194d91",
@@ -11,7 +11,7 @@
     "PuyoAnalysis-Source-Windows-v1.0.2/SETUP_FIRST.bat": "992b07f9731ade23bfbfcf2c0ebbbc2a6e8bca423e536fd439a24c8a03f5c02f",
     "PuyoAnalysis-Source-Windows-v1.0.2/START_Analysis.bat": "3c168ce1dcfece0a225681c3f6919145ee387ab16933a977ea9f20faebdf8b44",
     "PuyoAnalysis-Source-Windows-v1.0.2/requirements-windows.txt": "41b54a6fb2918667ca47a61d73b522629d84490f3d78f0f20b21135faba10d35",
-    "PuyoAnalysis-Source-Windows-v1.0.2/puyo_tools/app.py": "f4c71ed03b943ec7e04298a6bfcb4a37432ddb2d0d415586788b3df3187e7047",
+    "PuyoAnalysis-Source-Windows-v1.0.2/puyo_tools/app.py": "15c1dd86e546b14f618783fcdd5179c99806e4912cd2a1adea79ad78ec12d924",
     "PuyoAnalysis-Source-Windows-v1.0.2/puyo_tools/placement_lab.py": "2bf4818a4579a2e0076d7ad61d517f2dbd3d67424e0bbcf3b65ee081ea43f285",
     "PuyoAnalysis-Source-Windows-v1.0.2/puyo_tools/common/placement_proto.py": "772b6bde414f95a422f6861d46bcf4687990d04d3d8a99a62b8328711793c123",
     "PuyoAnalysis-Source-Windows-v1.0.2/puyo_tools/record_store.py": "eafb5dd1d5b2d17b0500f763d7b1f2afc0ea65fbcec3a44f9b5d953ff6cb58e3",
