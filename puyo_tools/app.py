@@ -426,17 +426,9 @@ class App(tk.Tk):
         ttk.Radiobutton(modebar,text='全候補を表示',variable=self.view,value='detail',command=self.show_results).pack(side='left',padx=12)
         self.representative_label=ttk.Label(self.tab2,wraplength=820,text='代表: ちぎり最少 → 全消し最多 → 探索順')
         self.representative_label.pack(anchor='w',padx=7)
-        responsebar=ttk.Frame(self.details_frame);responsebar.pack(fill='x',pady=(8,3))
         self.response_mode=tk.BooleanVar(value=False)
         self.response_limit=tk.StringVar(value='5')
         self.response_ranks={}
-        ttk.Checkbutton(responsebar,text='対応想定で絞る・代表を選ぶ',variable=self.response_mode,
-                        command=self.change_response_mode).pack(side='left')
-        ttk.Label(responsebar,text='連鎖数の上限:').pack(side='left',padx=(12,3))
-        limit=ttk.Combobox(responsebar,textvariable=self.response_limit,values=[str(n) for n in range(1,20)],
-                           state='readonly',width=3)
-        limit.pack(side='left');limit.bind('<<ComboboxSelected>>',lambda e:self.change_response_mode())
-        ttk.Label(responsebar,text='連鎖（各手）').pack(side='left')
 
         self.filters_visible=False
         self.filter_button=ttk.Button(self.tab2,text='絞り込みを表示 ▼',command=self.toggle_filters)
@@ -1903,7 +1895,7 @@ class App(tk.Tk):
 
     def build_tenpai_tab(self):
         actions=ttk.Frame(self.tab_tenpai);actions.pack(fill='x',padx=8,pady=6)
-        self.input_shanten=tk.StringVar(value='1')
+        self.input_shanten=tk.StringVar(value='0')
         ttk.Label(actions,text='最大シャンテン:').pack(side='left')
         ttk.Combobox(actions,textvariable=self.input_shanten,values=('0','1','2','3'),state='readonly',width=3).pack(side='left',padx=5)
         self.input_tenpai_button=ttk.Button(actions,text='入力盤面から探索',command=self.start_input_tenpai);self.input_tenpai_button.pack(side='left',padx=5)
