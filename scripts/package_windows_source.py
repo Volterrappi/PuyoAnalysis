@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 ARCHIVE_NAME = "PuyoAnalysis-Source-Windows-v1.0.2.zip"
 OUT = ROOT / "dist" / ARCHIVE_NAME
 FILES = [
-    "README.md", "GUIDE.md", "LICENSE", "THIRD_PARTY_NOTICES.md",
+    "README.md", "利用ガイド.md", "LICENSE", "THIRD_PARTY_NOTICES.md",
     "SETUP_FIRST.bat", "START_Analysis.bat",
     "requirements-windows.txt",
     "puyo_tools/app.py", "puyo_tools/placement_lab.py", "puyo_tools/common/placement_proto.py", "puyo_tools/record_store.py", "puyo_tools/crop_suggest.py", "puyo_tools/tenpai_probe.py",
