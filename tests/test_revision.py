@@ -93,6 +93,71 @@ class GuiRevisionTests(RevisionTests):
         self.messages = patch('app.messagebox.showinfo')
         self.messages.start(); self.addCleanup(self.messages.stop)
 
+    def test_analysis_status_tracks_relevant_settings(self):
+        app=self.app;app.calculate_chain()
+        self.assertNotIn('変更されています',app.analysis_status.cget('text'))
+        app.initial_bonus.set(True)
+        self.assertIn('変更されています',app.analysis_status.cget('text'))
+        app.calculate_chain()
+        self.assertNotIn('変更されています',app.analysis_status.cget('text'))
+        app.eff_mode.set('earned')
+        self.assertIn('変更されています',app.analysis_status.cget('text'))
+        app.calculate_chain();app.row14_enabled.set(True);app.toggle_row14();app.calculate_chain()
+        app.mawashi_frames.set('37')
+        self.assertNotIn('変更されています',app.analysis_status.cget('text'))
+        app.tabs.select(app.tab2)
+        app.search_context={'board':tuple(app.board()),'next_pairs':('..','..','..'),'row14':'......','row14_enabled':True,'mawashi_frames':37,'initial_bonus':True,'efficiency_bonus_mode':'earned','score_bonus':False}
+        app.update_analysis_status()
+        self.assertNotIn('変更されています',app.analysis_status.cget('text'))
+        app.score_bonus.set(True)
+        self.assertIn('変更されています',app.analysis_status.cget('text'))
+        app.score_bonus.set(False);app.mawashi_frames.set('40')
+        self.assertIn('変更されています',app.analysis_status.cget('text'))
+
+    def test_undo_interleaved_board_and_row14_and_clear(self):
+        from types import SimpleNamespace
+        app=self.app
+        bottom=SimpleNamespace(x=1,y=12*28+1)
+        app.start_paint(bottom,'R');app.end_paint()
+        app.edit_row14(SimpleNamespace(x=1),'Y')
+        app.start_paint(SimpleNamespace(x=29,y=12*28+1),'B');app.end_paint()
+        app.undo_board();self.assertEqual(app.row14,'Y.....');self.assertEqual(app.snapshot_board()[-1],'R.....')
+        app.undo_board();self.assertEqual(app.row14,'......');self.assertEqual(app.snapshot_board()[-1],'R.....')
+        app.undo_board();self.assertEqual(list(app.snapshot_board()),EMPTY)
+        app.edit_row14(SimpleNamespace(x=1),'P');app.clear();app.undo_board()
+        self.assertEqual(app.row14,'P.....')
+
+    def test_left_controls_scroll_to_bottom_at_small_height(self):
+        app=self.app;app.geometry('1330x650');app.deiconify();app.update()
+        target=button(app.left_content,'未検証ツールボックス')
+        self.assertGreater(app.left_canvas.bbox('all')[3],app.left_canvas.winfo_height())
+        app.left_canvas.yview_moveto(1);app.update_idletasks()
+        self.assertGreater(app.left_canvas.yview()[0],0)
+        self.assertLessEqual(target.winfo_rooty()+target.winfo_height(),app.left_canvas.winfo_rooty()+app.left_canvas.winfo_height())
+
+    def test_unanalysed_board_with_row14_saves_and_restores(self):
+        self.app.row14='R.....'
+        self.app.row14_enabled.set(True);self.app.toggle_row14()
+        with patch('app.messagebox.showerror') as error:
+            self.app.save_standalone()
+            dialog=next(w for w in self.app.winfo_children() if w.winfo_class()=='Toplevel')
+            button(dialog,'保存').invoke()
+            error.assert_not_called()
+        item=record_store.load(record_store.list_records()[0]['id'])
+        self.assertEqual(item['analysis_result']['row14'],'R.....')
+        self.app.row14='......'
+        self.app.open_record_manager();self.app.update_idletasks()
+        window=next(w for w in self.app.winfo_children() if w.winfo_class()=='Toplevel')
+        def children(w):
+            for child in w.winfo_children():yield child;yield from children(child)
+        table=next(w for w in children(window) if w.winfo_class()=='Treeview')
+        table.selection_set(item['id']);table.event_generate('<<TreeviewSelect>>');self.app.update()
+        # Restore is exposed as the existing record-manager button.
+        restore=next(w for w in children(window) if w.winfo_class()=='TButton' and w.cget('text')=='盤面・NEXTを読み込む')
+        restore.invoke()
+        self.assertEqual(self.app.row14,'R.....')
+        self.assertTrue(self.app.row14_enabled.get())
+
     def test_image_cancel_does_not_change_attachment_and_apply_does(self):
         red = Image.new('RGB', (300, 600), 'red')
         blue = Image.new('RGB', (300, 600), 'blue')
@@ -151,6 +216,47 @@ class GuiRevisionTests(RevisionTests):
         self.assertNotIn('number',table['columns'])
         self.assertFalse(any(w.winfo_class() == 'TButton' and w.cget('text') == '記録一覧をCSV保存'
                              for w in descendants(manager)))
+
+    def test_selected_record_previews_board_and_axis_child_without_loading(self):
+        board=EMPTY[:-1]+['R.....']
+        item=record_store.save('未分類','赤の記録','盤面のみ','',board,['RB','GY','PP'],{})
+        original=self.app.snapshot_board()
+        original_pairs=self.app.pairs_var.get()
+        self.app.open_record_manager()
+        manager=next(w for w in self.app.winfo_children() if w.winfo_class()=='Toplevel')
+        table=next(w for w in descendants(manager) if w.winfo_class()=='Treeview')
+        table.selection_set(item['id']);table.event_generate('<<TreeviewSelect>>');self.app.update()
+        canvases=[w for w in descendants(manager) if w.winfo_class()=='Canvas']
+        self.assertEqual(len(canvases),2)
+        board_canvas=next(w for w in canvases if w.winfo_name()!='record_next')
+        self.assertEqual([board_canvas.itemcget(i,'fill') for i in board_canvas.find_all()
+                          if board_canvas.type(i)=='oval'],['#e94f58'])
+        next_canvas=next(w for w in canvases if w.winfo_name()=='record_next')
+        fills=[next_canvas.itemcget(i,'fill') for i in next_canvas.find_all() if next_canvas.type(i)=='oval']
+        self.assertEqual(fills,['#438be5','#e94f58','#f6d451','#4fc475','#ba73e6','#ba73e6'])
+        button(manager,'一覧を更新').invoke();self.app.update()
+        self.assertEqual(table.selection(),(item['id'],))
+        self.assertEqual(self.app.snapshot_board(),original)
+        self.assertEqual(self.app.pairs_var.get(),original_pairs)
+
+    def test_record_preview_clears_after_search_and_handles_corrupt_board(self):
+        item=record_store.save('未分類','記録','盤面のみ','',EMPTY,[],{})
+        self.app.open_record_manager()
+        manager=next(w for w in self.app.winfo_children() if w.winfo_class()=='Toplevel')
+        table=next(w for w in descendants(manager) if w.winfo_class()=='Treeview')
+        table.selection_set(item['id']);table.event_generate('<<TreeviewSelect>>');self.app.update()
+        self.assertEqual(len([w for w in descendants(manager) if w.winfo_class()=='Canvas']),2)
+        item['board']=['invalid']
+        (record_store.record_directory(item['id'])/'record.json').write_text(json.dumps(item),encoding='utf-8')
+        button(manager,'一覧を更新').invoke();self.app.update()
+        self.assertFalse(any(w.winfo_class()=='Canvas' for w in descendants(manager)))
+        self.assertTrue(any('プレビューを表示できません' in str(w.cget('text'))
+                            for w in descendants(manager) if 'text' in w.keys()))
+        entry=next(w for w in descendants(manager) if w.winfo_class()=='TEntry')
+        entry.insert(0,'一致しない名前');self.app.update()
+        self.assertFalse(table.get_children())
+        self.assertTrue(any('一覧から記録を選ぶと' in str(w.cget('text'))
+                            for w in descendants(manager) if 'text' in w.keys()))
 
     def test_restore_without_image_clears_previous_image_and_search(self):
         item = record_store.save('未分類', '画像なし', '盤面のみ', '', EMPTY, [], {})
