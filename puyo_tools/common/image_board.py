@@ -60,6 +60,61 @@ def _sample_cell(rgb, left, top, right, bottom):
     return classify_rgb(med)
 
 
+def _sample_board_cell(rgb,left,top,right,bottom,cross_cell=False):
+    """Require a body-sized foreground patch, rather than a few colored pixels.
+
+    Estimate the local background from cell corners. The denser lower-body
+    grid rejects thin X marks and leaves NEXT's existing sampler unchanged.
+    """
+    w,h=right-left,bottom-top
+    def pixel(fx,fy):
+        x=max(0,min(rgb.width-1,int(left+fx*w)))
+        y=max(0,min(rgb.height-1,int(top+fy*h)))
+        return rgb.getpixel((x,y))
+    corners=[pixel(x,y) for x,y in ((.07,.07),(.93,.07),(.07,.93),(.93,.93),
+                                   (.07,.20),(.93,.20),(.07,.80),(.93,.80))]
+    background=tuple(median(p[k] for p in corners) for k in range(3))
+    labels=[];votes=Counter()
+    for fy in (.42,.50,.58,.66,.74,.82):
+        line=[]
+        for fx in (.20,.30,.40,.50,.60,.70,.80):
+            p=pixel(fx,fy)
+            label=classify_rgb(p) if max(abs(p[k]-background[k]) for k in range(3))>=30 else '.'
+            line.append(label)
+            if label!='.':votes[label]+=1
+        labels.append(line)
+    # Require several filled 2x2 patches: eyes/highlights may interrupt a body,
+    # while an isolated pixel or a narrow diagonal must not become a puyo.
+    for label,amount in votes.most_common():
+        blocks=sum(all(labels[y+dy][x+dx]==label for dy in (0,1) for dx in (0,1))
+                   for y in range(5) for x in range(6))
+        wide_body=False
+        for line in labels[3:]:
+            run=0
+            for value in line:
+                run=run+1 if value==label else 0
+                if run>=4:wide_body=True
+        if amount>=9 and blocks>=3 and wide_body:
+            if cross_cell and label=='R':
+                # The rotating death marker can be as broad as a red puyo.
+                # At column3/row12 alone, require positive eye/highlight
+                # evidence on the upper body; uncertain red stays empty.
+                # Do not inspect the top border or the neighboring cell.
+                whites=[]
+                for fy in (.20,.26,.32,.38,.44,.50):
+                    line=[]
+                    for fx in (.25,.3125,.375,.4375,.50,.5625,.625,.6875,.75):
+                        p=pixel(fx,fy)
+                        _,sat,value=colorsys.rgb_to_hsv(*(channel/255 for channel in p))
+                        line.append(min(p)>=170 and sat<=.30 and value>=.72)
+                    whites.append(line)
+                white_count=sum(sum(line) for line in whites)
+                adjacent=any(line[x] and line[x+1] for line in whites for x in range(8))
+                if white_count<3 or not adjacent:return '.'
+            return label
+    return '.'
+
+
 def recognize_board(image, crop, visible_rows=12):
     """Return 13x6 character rows from PIL image and crop (l,t,r,b)."""
     if visible_rows not in (12, 13):
@@ -78,7 +133,8 @@ def recognize_board(image, crop, visible_rows=12):
             x1 = left + (c + 1) * (right - left) / 6
             y0 = top + r * (bottom - top) / visible_rows
             y1 = top + (r + 1) * (bottom - top) / visible_rows
-            rows[r + offset][c] = _sample_cell(rgb, x0, y0, x1, y1)
+            rows[r + offset][c] = _sample_board_cell(rgb, x0, y0, x1, y1,
+                                                   cross_cell=(r+offset==1 and c==2))
     return [''.join(row) for row in rows]
 
 

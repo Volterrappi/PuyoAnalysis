@@ -86,8 +86,8 @@ def multi_rows(height, quick, maximum=12, group_counts=(2,3,4)):
     return sorted(rows,key=lambda r:(r['efficiency'],r['score'],r['group_count'],r['sizes']))
 
 
-# Ten-million-point time-attack pace, expressed in points per second.
-TA_PACES = {minutes: 10_000_000 / (minutes * 60) for minutes in (120, 100, 80)}
+# One-million-point time-attack pace, expressed in points per second.
+TA_PACES = {minutes: 1_000_000 / (minutes * 60) for minutes in (12, 10, 8, 6)}
 
 
 def group_equal_metrics(rows):

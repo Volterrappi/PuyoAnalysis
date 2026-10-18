@@ -117,7 +117,13 @@ def efficiency(chain:Chain,include_future_all_clear=False):
 class Placement:
     col:int
     direction:str
-    def __str__(self):return f'{self.col+1}列・子{dict(U="上",D="下",L="左",R="右")[self.direction]}'
+    def __str__(self):
+        axis=self.col+1
+        if self.direction in ('U','D'):position=f'{axis}縦'
+        else:
+            other=axis+(-1 if self.direction=='L' else 1)
+            position=f'{min(axis,other)}{max(axis,other)}'
+        return f'{position}・子{dict(U="上",D="下",L="左",R="右")[self.direction]}'
 
 def moves(pair):
     same=pair[0]==pair[1]
@@ -173,7 +179,7 @@ class Candidate:
     final:Board
 
 
-def solve(board:Board,pairs:tuple[str,...],initial_bonus=False,limit=None):
+def solve(board:Board,pairs:tuple[str,...],initial_bonus=False,limit=None,*,tenpai_only=False):
     """Enumerate potential 3-move paths; reachability is intentionally permissive.
 
     A child in row 14 is omitted from the 13-row state, so follow-up turns,
@@ -189,6 +195,7 @@ def solve(board:Board,pairs:tuple[str,...],initial_bonus=False,limit=None):
             placed=place(current,pairs[depth],move)
             if placed is None:continue
             chain=simulate(placed)
+            if tenpai_only and (chain.count>1 or sum(bool(t.chain.count) for t in turns)+bool(chain.count)>1):continue
             if dead(chain.final):continue
             used=held and chain.count>0
             points=chain.score+(2100 if used else 0)
