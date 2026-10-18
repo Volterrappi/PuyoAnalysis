@@ -4,7 +4,7 @@
 
 ## ダウンロード・起動
 1. 64bit Windows 10/11とPython 3.12以上（Python Launcherを含む）を準備します。
-2. [ダウンロードページ](https://github.com/Volterrappi/PuyoReview-Release/releases/latest)からZIPをダウンロードして展開します。
+2. [ダウンロードページ](https://github.com/Volterrappi/PuyoAnalysis/releases/latest)からZIPをダウンロードして展開します。
 3. `SETUP_FIRST.bat` を起動します（初回のみ・ネット接続が必要です）。
 4. `START_Analysis.bat` を起動します。
 
@@ -20,7 +20,7 @@ Python 3.13で実機動作確認、Python 3.12で自動テスト済みです。�
 詳しい操作や注意点は[利用ガイド](GUIDE.md)をご覧ください。
 
 ## 不具合・要望
-[Issues](https://github.com/Volterrappi/PuyoReview-Release/issues) または [X @istnpypy](https://x.com/istnpypy)へ。
+[Issues](https://github.com/Volterrappi/PuyoAnalysis/issues) または [X @istnpypy](https://x.com/istnpypy)へ。
 
 ## ライセンス
 独自制作のコード・画像は[MITライセンス](LICENSE)で公開しています。使用ライブラリについては[第三者コンポーネント](THIRD_PARTY_NOTICES.md)をご覧ください。

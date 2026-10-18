@@ -1,11 +1,11 @@
 {
   "version": "v1.0.2",
   "archive": "PuyoAnalysis-Source-Windows-v1.0.2.zip",
-  "bytes": 78800,
-  "sha256": "f2a15619960268cc606b7b3e0eb7e833e217452432c3264646b0f604e4edad4c",
+  "bytes": 78791,
+  "sha256": "db98232154750208b61d6ddf4caac542d8e8c13185c76a911a05b1248366d845",
   "files": {
-    "PuyoAnalysis-Source-Windows-v1.0.2/README.md": "f48145b4e0c386f972ed5337b1dc13ed64f526948f737f5574004c6acc876a01",
-    "PuyoAnalysis-Source-Windows-v1.0.2/GUIDE.md": "a12afc24de5fce681655475b6f3e826e265b7764bbde6f4f0f3e614dc8194d91",
+    "PuyoAnalysis-Source-Windows-v1.0.2/README.md": "b1bc2e2d45b05614de4bc95e6e83bdc34d94711da03878d36bbd7419d20c5563",
+    "PuyoAnalysis-Source-Windows-v1.0.2/GUIDE.md": "b4278d0ac1aa1aec7f428dbd5c8290779e33da9645d825b6ce82357039ba591e",
     "PuyoAnalysis-Source-Windows-v1.0.2/LICENSE": "90fb7b8389dc158bdd4c51dc51ef252c28bcd404b58637809a3afd677290813c",
     "PuyoAnalysis-Source-Windows-v1.0.2/THIRD_PARTY_NOTICES.md": "6e676b09c339b4b3da22cb25b9dbbbf75077b3d30be70a7f1df40912b888b68c",
     "PuyoAnalysis-Source-Windows-v1.0.2/SETUP_FIRST.bat": "992b07f9731ade23bfbfcf2c0ebbbc2a6e8bca423e536fd439a24c8a03f5c02f",

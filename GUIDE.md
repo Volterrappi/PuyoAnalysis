@@ -57,4 +57,4 @@ NEXTを置く候補を探す場合は「3手全探索」で「NEXT 3組で全探
 - ZIPは「すべて展開」してから、展開先のBATを実行してください。
 - Python Launcher（`py`）を含む64bit版Python 3.12以上が必要です。3.12より新しい版では警告を表示しますが、セットアップを続行できます。
 - `SETUP_FIRST.bat` に「Libraries OK」「Setup complete」が出たことを確認してください。初回はネット接続が必要です。
-- 解決しない場合は、表示されたエラーとPythonのバージョンを添えて[Issues](https://github.com/Volterrappi/PuyoReview-Release/issues) または [X @istnpypy](https://x.com/istnpypy)へお知らせください。
+- 解決しない場合は、表示されたエラーとPythonのバージョンを添えて[Issues](https://github.com/Volterrappi/PuyoAnalysis/issues) または [X @istnpypy](https://x.com/istnpypy)へお知らせください。
